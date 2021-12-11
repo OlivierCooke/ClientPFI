@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta author="OlivierCooke/AlexandreLeblanc">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Worthy</title>
+
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <!-- favicon link: use https://favicon.io/favicon-converter/ to create new favicon -->
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <!-- navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark shadow">
+        <div class="container-fluid gap-2">
+            <a class="navbar-brand" href="#">
+                <img src="./assets/logo.png" width="50" height="50" />
+            </a>
+
+            <div class="collapse navbar-collapse flex-grow-0 gap-2" id="navbarSupportedContent">
+                <button type="button" class="btn btn-outline-primary shadow-sm" id="addNews">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle shadow-sm" type="button" id="cmbAuthor"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Filter Author
+                    </button>
+                    <ul class="dropdown-menu style-4" aria-labelledby="cmbAuthor">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </div>
+                <form class="d-flex">
+                    <input class="form-control me-2" type="search" placeholder="Search by key words"
+                        aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+            </div>
+            <div class="d-flex flex-row justify-content-end gap-2 flex-grow-1">
+                <div class="connectedContainer d-flex flex-row gap-2 visually-hidden">
+                    <div id="avatarContainer" class="shadow-sm">
+                        <div class='avatar'
+                            style='background:url(" https://avatars.dicebear.com/api/bottts/qwerty.png ") no-repeat center; background-size: cover;'>
+                        </div>
+                    </div>
+                    <div class='unameContainer d-flex flex-row align-items-center justify-content-center my-cu'>
+                        <span id="link_OpenProfilDialog" class="ellipsis">My UName</span>
+                    </div>
+                    <button id="submitLogout" type="button" class="btn btn-outline-primary shadow-sm my-cu">
+                        <span>Log Out</span>
+                    </button>
+                </div>
+                <div class=" disconnectedContainer d-flex flex-row gap-2">
+                    <button type="button" class="btn btn-primary shadow-sm my-cu" id="login" data-bs-toggle="modal"
+                        data-bs-target="#loginModal">
+                        <span>Login</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary shadow-sm my-cu" id="register"
+                        data-bs-toggle="modal" data-bs-target="#registerModal">
+                        <span>Register</span>
+                    </button>
+                </div>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    </nav>
+
+    <!--empty container-->
+    <div class="emptyContainer container d-flex overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
+        <div class=" d-flex flex-column empty flex-grow-0 m-auto">
+            <img class="img-fluid" src="/assets/empty.png">
+            <span class="text-white text-center"> Wow, such emptyness...</span>
+        </div>
+    </div>
+
+
+    <!-- RegisterModal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h2 class="modal-title flex-fill text-center registerTitle" id="RegisterModalLabel">Register</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="registerForm" class="d-grid gap-2">
+                        <div class="form-input"> <input id="registerUname" type="text" class="form-control"
+                                placeholder="Username">
+                        </div>
+                        <span id="unameError" class="text-center text-danger visually-hidden"> Invalid username</span>
+                        <div class="form-input"> <input id="registerEmail" type="text" class="form-control"
+                                placeholder="Email address">
+                        </div>
+                        <span id="emailError" class="text-center text-danger visually-hidden"> Invalid email</span>
+                        <div class="form-input"> <input id="registerPassword" type="password" class="form-control"
+                                placeholder="Password">
+                        </div><span id="passwordError" class="text-center text-danger visually-hidden"> Invalid
+                            password</span>
+                        <div class="form-input"> <input id="registerPasswordConfirmation" type="password"
+                                class="form-control" placeholder="Confirm Password">
+                        </div>
+                        <span id="passwordCError" class="text-center text-danger visually-hidden"> Passwords are not the
+                            same</span>
+                        <div class="imageDownloader" id="avatar" defautimagesrc="assets/user.png"></div>
+                        <button id="submitRegister" class="btn btn-primary mt-4">Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UpdateModal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="UpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h2 class="modal-title flex-fill text-center updateTitle" id="UpdateModalLabel">Update Profile</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="updateForm" class="d-grid gap-2">
+                        <div class="form-input"> <input id="updateUname" type="text" class="form-control"
+                                placeholder="Username">
+                        </div>
+                        <span id="unameErrorUpdate" class="text-center text-danger visually-hidden"> Invalid
+                            username</span>
+                        <div class="form-input"> <input id="updateEmail" type="text" class="form-control"
+                                placeholder="Email address">
+                        </div>
+                        <span id="emailErrorUpdate" class="text-center text-danger visually-hidden"> Invalid
+                            email</span>
+                        <div class="form-input"> <input id="updatePassword" type="text" class="form-control"
+                                placeholder="Password">
+                        </div><span id="passwordErrorUpdate" class="text-center text-danger visually-hidden"> Invalid
+                            password</span>
+                        <div class="form-input"> <input id="updatePasswordConfirmation" type="text" class="form-control"
+                                placeholder="Confirm Password">
+                        </div>
+                        <span id="passwordCErrorUpdate" class="text-center text-danger visually-hidden"> Passwords are
+                            not the
+                            same</span>
+                        <div class="imageDownloader" id="avatarUpdate" defautimagesrc="assets/user.png"></div>
+                        <button id="submitupdate" class="btn btn-primary mt-4">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LoginModal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h2 class="modal-title flex-fill text-center loginTitle" id="LoginModalLabel">Login</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-grid gap-2">
+                        <span id="errorLogin" class="text-center text-danger visually-hidden">Credentials are
+                            shizzled...</span>
+                        <div class="form-input"> <input id="loginEmail" type="text" class="form-control"
+                                placeholder="Email address">
+                        </div>
+                        <div class="form-input"> <input id="loginPassword" type="password" class="form-control"
+                                placeholder="Password">
+                        </div>
+                        <div class="form-check"> <input id="remember-me" class="form-check-input" type="checkbox"
+                                value="" id="flexCheckChecked" checked> <label class="form-check-label"
+                                for="flexCheckChecked">
+                                Remember me </label> </div>
+                        <button id="submitLogin" class="btn btn-primary mt-4">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery-3.5.1.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/Validation.js"></script>
+<script src="js/WebAPIRequest.js"></script>
+<script src="js/jquery-confirm.js"></script>
+<script src="js/jquery.maskedinput.js"></script>
+<script src="js/imageUploadUtilities.js"></script>
+
+<script>
+    "use strict";
+    $(document).ready(initUI);
+
+    let editMode = false;
+    let addMode = false;
+    let editProfil = false;
+    let connected = false;
+    let queryString = "";
+    let search = "";
+    let searchShowed = false;
+    let sorted = [{ field: "Created", desc: true }];
+    let currentETag = "";
+    let previousQueryString = "";
+    let photoValidationProvider = null;
+    let profilValidationProvider = null;
+    let pauseNewsListPeriodicRefresh = false;
+    let periodicRefreshPeriod = 5; // seconds
+
+
+    function initUI() {
+        $("#submitLogin").click(Login)
+        $('#submitLogout').click(Logout)
+        $('#submitRegister').click(validInputRegister)
+        $('#submitupdate').click(saveChanges)
+
+        //Login events
+        $('#loginModal').on('shown.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = true;
+            if (localStorage.getItem('rememberme') == "1") {
+                $("#remember-me").attr("checked", "checked");
+                let email = localStorage.getItem('loginemail');
+                let password = localStorage.getItem('loginpassword');
+                if (email) $("#loginEmail").val(email);
+                if (password) $("#loginPassword").val(password);
+            } else {
+                $("#loginEmail").val("");
+                $("#loginPassword").val("");
+            }
+        });
+        $('#loginModal').on('hidden.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = false;
+            if ($('#remember-me').is(":checked")) {
+                localStorage.setItem('rememberme', "1");
+                localStorage.setItem('loginemail', $("#loginEmail").val());
+                localStorage.setItem('loginpassword', $("#loginPassword").val());
+            } else {
+                localStorage.setItem('rememberme', "0");
+                localStorage.removeItem('loginemail');
+                localStorage.removeItem('loginpassword');
+            }
+        });
+
+        // register events
+        $('#registerModal').on('shown.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = true;
+
+            /*  J'ai essayer d'intégré l'api dicebear pour avoir des default avatars uniques pour chaques usagers qui ne choisisent pas d'avatars personnels...
+                J'ai remarquer qu'on ne peut pas forcer un file dans un input type file (par souci de securité).. cela veux dire que si on veut intégré l'api il faut envoyer le seed de l'image au serveur pour pouvoir sauvegarder l'avatar de l'usager... comme ceci est un complication, nous avons abandonné le projet.
+                Mais dicebear est cool.... pour les prochains projets... ;)
+            let seed = generateSeed()
+            let fullUrl = 'https://avatars.dicebear.com/api/bottts/' + seed + '.png'
+            $('.imageDownloaderContainer').append('<div class="imageDownloader" id="avatar" defautimagesrc="' + fullUrl + '"></div>')
+            createDiv(fullUrl)
+            */
+
+            $('#registerUname').val('');
+            $('#registerEmail').val('');
+            $('#registerPassword').val('');
+            $('#registerPasswordConfirmation').val('');
+            $('.imageDownloader').empty();
+            $('.imageDownloader').attr('defautimagesrc', '/assets/user.png')
+            createUploader()
+        });
+        $('#registerModal').on('hidden.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = false;
+
+            $('#registerUname').val('');
+            $('#registerEmail').val('');
+            $('#registerPassword').val('');
+            $('#registerPasswordConfirmation').val('');
+            $('.imageDownloader').empty();
+            $('.imageDownloader').attr('defautimagesrc', '/assets/user.png')
+            createUploader()
+        });
+
+        $('#updateModal').on('hidden.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = false;
+
+            $('#emailErrorUpdate').addClass('visually-hidden');
+            $('#unameErrorUpdate').addClass('visually-hidden');
+            $('#passwordCErrorUpdate').addClass('visually-hidden');
+            $('#passwordErrorUpdate').addClass('visually-hidden');
+        })
+    }
+    function closeAllDialog() {
+        $('#registerModal').modal('hide')
+        $('#loginModal').modal('hide')
+    }
+
+    function Alert(message) {
+        $.confirm({
+            title: message,
+            content: '',
+            buttons: {
+                close: function () { }
+            }
+        });
+    }
+
+    function updateProfile() {
+        if (connected) {
+            let profile = retrieveLoggedUser()
+            $('#updateModal').modal('show');
+            $('#updateUname').val(profile.Name)
+            $('#updateEmail').val(profile.Email)
+            $('#updatePassword').val(profile.Password)
+            $('#updatePasswordConfirmation').val(profile.Password)
+            $('.imageDownloader').empty();
+            $('.imageDownloader').attr('defautimagesrc', profile.AvatarURL)
+            createUploader()
+            editProfil = true
+        }
+    }
+
+    function forceLogout() {
+        Alert("Session expired. You have been disconnected.");
+        closeAllDialog();
+        deConnect();
+        updateUI(true);
+    }
+    function generateSeed() {
+        let r = (Math.random() + 1).toString(36).substring(2);
+        return r;
+    }
+    function Logout() {
+        webAPI_logout(retrieveLoggedUser().Id, updateUI, AlertError)
+    }
+    function statusToString(status) {
+        let text = "Le server ne répond pas.";
+        switch (status) {
+            case 401: text = "Request not authorized. You need to be logged in."; break;
+            case 409: text = "Data Conflict. Request was rejected."; break;
+            case 422: text = "Data format was incorrect. Request was rejected."; break;
+        }
+        return text;
+    }
+    function AlertError(status) {
+        $.confirm({
+            title: '<img src="assets/error.png" style="width:40px;margin:10px" alt="httpError"/>Encountered an error!',
+            content: statusToString(status) + ' (' + status + ')',
+            type: 'red',
+            typeAnimated: true,
+            buttons: {
+
+                close: {
+                    btnClass: 'btn-red',
+                    action: function () {
+                        this.close();
+                        if (status == 401) {
+                            forceLogout();
+                        }
+                        pauseNewsListPeriodicRefresh = true;
+                    }
+                }
+            }
+        });
+    }
+    function Login() {
+        webAPI_login($("#loginEmail").val(),
+            $("#loginPassword").val(),
+            updateUI,
+            () => {
+                $('#errorLogin').removeClass('visually-hidden')
+            })
+    }
+    function updateUI() {
+        updateConnected();
+        //getNews(true);
+    }
+
+    function updateConnected() {
+
+        connected = false;
+        let username = "";
+        if (retrieveLoggedUser() != null) {
+            username = retrieveLoggedUser().Name;
+            connected = true;
+        }
+        if (connected) {
+            $('#errorLogin').addClass('visually-hidden')
+            setUsername(username);
+            $("#avatarContainer").empty();
+            $("#avatarContainer").append(html_fittedAvatar(retrieveLoggedUser().AvatarURL, 'avatar'));
+            $('.connectedContainer').removeClass('visually-hidden')
+            $('.disconnectedContainer').addClass('visually-hidden')
+            $('#loginModal').modal('hide');
+        }
+        else {
+            $("#avatarContainer").empty();
+            $('link_OpenProfilDialog').empty();
+            $('.connectedContainer').addClass('visually-hidden')
+            $('.disconnectedContainer').removeClass('visually-hidden')
+        }
+    }
+    function setUsername(username) {
+        $("#link_OpenProfilDialog").text(username)
+        $("#link_OpenProfilDialog").click(updateProfile);
+        $('#avatarContainer').click(updateProfile)
+    }
+
+    function html_fittedAvatar(Avatar_url, css = '') {
+        return "<div class='" + css + "' style='background:url(" + Avatar_url + ") no-repeat center; background-size: cover;'></div>";
+    }
+    function operationOnGoing() {
+        return addMode || editMode || editProfil;
+    }
+    function preview(id) {
+        let image = document.getElementById('registerImage');
+        image.src = URL.createObjectURL(event.target.files[0]);
+    }
+
+    function validInputRegister(e) {
+        let regexEmail = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$/
+        let email = $('#registerEmail').val();
+        let username = $('#registerUname').val();
+        let confirmPassword = $('#registerPasswordConfirmation').val();
+        let password = $('#registerPassword').val();
+        let errorFound = false;
+
+        if (!regexEmail.test(email)) {
+            errorFound = true;
+            $('#emailError').removeClass('visually-hidden');
+        }
+        else {
+            $('#emailError').addClass('visually-hidden');
+        }
+        if (!username) {
+            errorFound = true;
+            $('#unameError').removeClass('visually-hidden');
+        }
+        else {
+            $('#unameError').addClass('visually-hidden');
+        }
+        if (confirmPassword != password) {
+            errorFound = true;
+            $('#passwordCError').removeClass('visually-hidden');
+        }
+        else {
+            $('#passwordCError').addClass('visually-hidden');
+        }
+        if (!password) {
+            errorFound = true;
+            $('#passwordError').removeClass('visually-hidden');
+        }
+        else {
+            $('#passwordError').addClass('visually-hidden');
+        }
+        if (errorFound) {
+            e.preventDefault()
+        }
+        else {
+            let data = {
+                Id: 0,
+                Name: username,
+                Email: email,
+                Password: password,
+                ImageData: getImageData('avatar')
+            }
+            webAPI_Register(data, () => { $('#registerModal').modal('hide'); updateUI(); }, AlertError);
+        }
+
+    }
+
+    /*
+        PAS TOUCHE AU UPDATE PROFILE .... CA CHIE LE PROFILE QUE TU UTILISE... JE SAIS COMMENT FIX... LAISSE MOI FAIRE :D
+    */
+    function saveChanges() {
+        let regexEmail = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$/
+        let email = $('#updateEmail').val();
+        let username = $('#updateUname').val();
+        let confirmPassword = $('#updatePasswordConfirmation').val();
+        let password = $('#updatePassword').val();
+        let errorFound = false;
+        let id = retrieveLoggedUser().Id
+        console.log(retrieveLoggedUser.Password)
+
+        if (!regexEmail.test(email)) {
+            errorFound = true;
+            $('#emailErrorUpdate').removeClass('visually-hidden');
+        }
+        else {
+            $('#emailErrorUpdate').addClass('visually-hidden');
+        }
+        if (!username) {
+            errorFound = true;
+            $('#unameErrorUpdate').removeClass('visually-hidden');
+        }
+        else {
+            $('#unameErrorUpdate').addClass('visually-hidden');
+        }
+        if (confirmPassword != password) {
+            errorFound = true;
+            $('#passwordCErrorUpdate').removeClass('visually-hidden');
+        }
+        else {
+            $('#passwordCErrorUpdate').addClass('visually-hidden');
+        }
+        if (!password) {
+            errorFound = true;
+            $('#passwordErrorUpdate').removeClass('visually-hidden');
+        }
+        else {
+            $('#passwordErrorUpdate').addClass('visually-hidden');
+        }
+        if (errorFound) {
+            e.preventDefault()
+        }
+        else {
+            let data = {
+                Id: id,
+                Name: username,
+                Email: email,
+                Password: password,
+                ImageData: getImageData('avatarUpdate')
+            }
+            console.log(data)
+            //webAPI_ChangeProfil(data, () => { $('#updateModal').modal('hide'); updateUI(); })
+        }
+    }
+</script>
+
+</html>

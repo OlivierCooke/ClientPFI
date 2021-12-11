@@ -1,0 +1,135 @@
+body{
+	background-color: #5e6a75;
+}
+.image-upload > input{
+	display: none;
+}
+#image-uploader{
+	background-color: #5e6a75;
+	border-radius: 6px;
+}
+
+.style-4::-webkit-scrollbar-track
+{
+	background: #ffffff;
+}
+
+.style-4::-webkit-scrollbar
+{
+	width: 10px;
+	background: transparent
+    ;
+}
+
+.style-4::-webkit-scrollbar-thumb
+{
+	background-color: #398dff;
+    border-radius: 50px;
+    height: 50px;
+	border: 1px solid rgb(33, 37, 41);
+    ;
+}
+.imageDownloader {
+    width:100%;
+}
+.imageDownloader > * {
+	border-radius: 0.25rem;
+}
+
+.UploadedImage {
+    width:100%;
+}
+.avatar{
+    width:48px;
+    height: 48px;
+    border-radius: 24px;
+}
+#avatarContainer{
+	background-color: #49535c;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+.loginTitle,
+.registerTitle{
+	margin-left: 32px;
+}
+.ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; 
+}
+.navbar-brand{
+	margin-right: 0rem;
+}
+.unameContainer{
+	max-width: 20ch;
+}
+.unameContainer span{
+	color: #ffffff;
+}
+.unameContainer span:hover{
+	cursor: pointer;
+	color: #84ace6;
+}
+.dropdown-menu {
+    max-height: 7rem;
+    overflow-y: auto;
+}
+.btn-primary,
+.btn-primary:focus{
+	border-color: #398dff;
+	background-color: #398dff;
+}
+.btn-primary:hover{
+	background-color: #2458a0;
+	border-color: #2458a0;
+}
+.btn-primary:active{
+	color: #ffffff;
+    border-color: #84ace6;
+	background-color: #84ace6;
+}
+.btn-outline-primary{
+	color: #398dff;
+    border-color: #398dff;
+}
+.btn-outline-primary:hover{
+	color: #ffffff;
+    border-color: #398dff;
+	background-color: #398dff;
+}
+.btn-outline-primary:active{
+	color: #ffffff;
+    border-color: #84ace6;
+	background-color: #84ace6;
+}
+
+.form-control:focus {
+	border-color: #398dff;
+	box-shadow: 0 0 0 0.2rem rgba(30, 74, 133, 0.55);
+} 
+.empty{
+	max-width: 350px;
+}
+.my-cu{
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+@media screen and (max-width: 991px) {
+	.navbar-collapse > *{
+		margin-top: 0.5rem;
+	}
+  }
+
+  @media screen and (max-width: 460px) {
+	.unameContainer > *{
+		display:none;
+	}
+	#avatarContainer:hover,
+	#avatavatarContainer > *:hover{
+		cursor: pointer;
+		transform: scale(1.05);
+	}
+
+  }
