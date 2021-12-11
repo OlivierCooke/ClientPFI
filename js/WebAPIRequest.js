@@ -2,6 +2,7 @@
     Méthodes d'accès aux services Web API_Server/bookmarks
  */
 
+//const apiBaseURL = "https://funny-ivory-pullover.glitch.me";
 const apiBaseURL = "https://funny-ivory-pullover.glitch.me";
 
 function tokenRequestURL() {
@@ -130,7 +131,7 @@ function webAPI_HEAD(successCallBack, errorCallBack) {
 }
 function webAPI_GET_ALL(queryString, successCallBack, errorCallBack) {
     $.ajax({
-        url: apiBaseURL + "/api/images" + queryString,
+        url: apiBaseURL + "/api/news" + queryString,
         type: 'GET',
         contentType: 'text/plain',
         data: {},
@@ -161,7 +162,7 @@ function webAPI_GET(id, successCallBack, errorCallBack) {
 }
 function webAPI_POST(data, successCallBack, errorCallBack) {
     $.ajax({
-        url: apiBaseURL + "/api/images",
+        url: apiBaseURL + "/api/news",
         type: 'POST',
         headers: getBearerAuthorizationToken(),
         contentType: 'application/json',

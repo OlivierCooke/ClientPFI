@@ -25,7 +25,8 @@
             </a>
 
             <div class="collapse navbar-collapse flex-grow-0 gap-2" id="navbarSupportedContent">
-                <button type="button" class="btn btn-outline-primary shadow-sm" id="addNews">
+                <button type="button" class="btn btn-outline-primary shadow-sm visually-hidden" id="addNews" data-bs-toggle="modal"
+                data-bs-target="#createModal">
                     <i class="bi bi-plus-lg"></i>
                 </button>
                 <div class="dropdown">
@@ -94,11 +95,11 @@
     </nav>
 
     <!--empty container-->
-    <div class="emptyContainer container d-flex overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
-        <div class=" d-flex flex-column empty flex-grow-0 m-auto">
-            <img class="img-fluid" src="/assets/empty.png">
-            <span class="text-white text-center"> Wow, such emptyness...</span>
-        </div>
+    <div id="mainContainer" class="emptyContainer container d-flex overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
+        <!--<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">
+            <img id="imageEmpty" class="img-fluid" src="/assets/empty.png">
+            <span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span>
+        </div>-->
     </div>
 
 
@@ -136,6 +137,7 @@
             </div>
         </div>
     </div>
+    <!-- END RegisterModal -->
 
     <!-- UpdateModal -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="UpdateModalLabel" aria-hidden="true">
@@ -174,6 +176,7 @@
             </div>
         </div>
     </div>
+    <!-- END UpdateModal -->
 
     <!-- LoginModal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
@@ -203,6 +206,34 @@
             </div>
         </div>
     </div>
+    <!-- END LoginModal -->
+
+    <!--CreatePostModal-->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h2 class="modal-title flex-fill text-center registerTitle" id="createModalLabel">Share the news</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="createForm" class="d-grid gap-2">
+                        <div class="form-input"> 
+                            <input id="createTitle" type="text" class="form-control" placeholder="Title">
+                        </div>
+                        <span id="unameError" class="text-center text-danger visually-hidden"> Invalid username</span>
+                        <div class="imageDownloader" id="imageCreate" defautimagesrc="assets/user.png"></div>
+                        <div class="form-input">
+                            <textarea id="createDescription" class="form-control" placeholder="Describe the news..."></textarea>
+                        </div>
+                        <button id="submitCreate" class="btn btn-primary mt-4">Publish</button>
+ 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--END CreatePostModal-->
 </body>
 <script src="js/bootstrap.js"></script>
 <script src="js/jquery-3.5.1.js"></script>
@@ -232,12 +263,18 @@
     let pauseNewsListPeriodicRefresh = false;
     let periodicRefreshPeriod = 5; // seconds
 
+    /*function installPeriodicphotosListRefresh() {
+            setInterval(() => {
+                if (!pausephotosListPeriodicRefresh & connected) getphotos();
+            }, periodicRefreshPeriod * 1000);
+    }*/
 
     function initUI() {
         $("#submitLogin").click(Login)
         $('#submitLogout').click(Logout)
         $('#submitRegister').click(validInputRegister)
         $('#submitupdate').click(saveChanges)
+        $('#submitCreate').click(create)
 
         //Login events
         $('#loginModal').on('shown.bs.modal', function (event) {
@@ -308,6 +345,45 @@
             $('#passwordErrorUpdate').addClass('visually-hidden');
         })
     }
+
+    function create(e){
+        //webAPI_POST
+
+        let createTitle = $('#createTitle').val();
+        let description = $('#createDescription').val();
+
+        console.log('create')
+        console.log(createTitle)
+        console.log(description)
+
+        let errorFound = false;
+
+        if (!createTitle) {
+            errorFound = true;
+            //$('#unameError').removeClass('visually-hidden');
+        }
+        else {
+            //$('#unameError').addClass('visually-hidden');
+        }
+        
+        if (errorFound) {
+            console.log('errorFound')
+            e.preventDefault()
+        }
+        else {
+            console.log('call')
+            let userLog = retrieveLoggedUser();
+            let data = {
+                Id: 0,
+                UserId: userLog['Id'], 
+                Titre: createTitle,
+                Description: description,
+                ImageData: getImageData('imageCreate')
+            }
+            webAPI_POST(data, () => { $('#createModal').modal('hide'); ()=>{console.log('create réussi')}; }, AlertError);
+        }
+    }
+
     function closeAllDialog() {
         $('#registerModal').modal('hide')
         $('#loginModal').modal('hide')
@@ -344,13 +420,16 @@
         deConnect();
         updateUI(true);
     }
+    
     function generateSeed() {
         let r = (Math.random() + 1).toString(36).substring(2);
         return r;
     }
+    
     function Logout() {
         webAPI_logout(retrieveLoggedUser().Id, updateUI, AlertError)
     }
+    
     function statusToString(status) {
         let text = "Le server ne répond pas.";
         switch (status) {
@@ -360,6 +439,7 @@
         }
         return text;
     }
+    
     function AlertError(status) {
         $.confirm({
             title: '<img src="assets/error.png" style="width:40px;margin:10px" alt="httpError"/>Encountered an error!',
@@ -381,6 +461,7 @@
             }
         });
     }
+    
     function Login() {
         webAPI_login($("#loginEmail").val(),
             $("#loginPassword").val(),
@@ -389,6 +470,7 @@
                 $('#errorLogin').removeClass('visually-hidden')
             })
     }
+    
     function updateUI() {
         updateConnected();
         //getNews(true);
@@ -410,14 +492,190 @@
             $('.connectedContainer').removeClass('visually-hidden')
             $('.disconnectedContainer').addClass('visually-hidden')
             $('#loginModal').modal('hide');
+            $('#addNews').removeClass('visually-hidden')
+            webAPI_GET_ALL('',updateNewsList,AlertError);
         }
         else {
             $("#avatarContainer").empty();
             $('link_OpenProfilDialog').empty();
             $('.connectedContainer').addClass('visually-hidden')
             $('.disconnectedContainer').removeClass('visually-hidden')
+            $('#addNews').addClass('visually-hidden')
         }
     }
+
+    function postTemplateOwner(news)
+    {
+        let title = news['Titre'];
+        let description = news['Description'];
+        let imageUrlPost = news['OriginalURL'];
+        let profileUrl = 'https://i.imgur.com/xhzhaGA.jpg';
+        let date = news['Date']
+        let username = news['Username']
+        let id = news['Id']
+
+        let post = "";
+        post += '<div class="container mt-5 mb-5">'
+        post += '<div class="row d-flex align-items-center justify-content-center">'
+        post += '<div class="col-md-6">'
+        //post += '<form action="#" method="post">'
+        post += '<div id="card_'+ id +'_glow" class="card text-white bg-dark shadow">'
+        post += '<div class="d-flex justify-content-between p-2 px-3">'               
+        post += '<div class="d-flex flex-row align-items-center gap-2">'
+        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'                            
+        post += '<div class="d-flex flex-column">'
+        post += '<span class="font-weight-bold">'+ username +'</span>'                                
+        post += '<small class="mr-2">'+ date +'</small></div></div>'
+        post += '<div class="d-flex flex-row mt-1 gap-2">'                            
+        post += '<button id="edit_btn_'+ id +'" class="btn btn-outline-primary rounded-circle" onclick="modify('+id+')">'                        
+        post += '<i class="bi bi-pencil"></i></button>'                     
+        post += '<button hidden id="btn_submit_edit_'+id+'" class="btn btn-outline-primary rounded-circle" type="submit"><i class="bi bi-check-lg"></i></button>'                            
+        post += '<button hidden id="btn_cancel_'+id+'" class="btn btn-outline-primary rounded-circle" onclick="cancelEdit(' +id+ ')">'                                
+        post += '<i class="bi bi-x-lg"></i></button>'                            
+        post += '<button id="btn_delete_'+ id +'" class="btn btn-outline-primary rounded-circle" onclick="deletePost()">'                            
+        post += '<i class="bi bi-x-lg"></i></button></div></div>'                            
+        post += '<div id="card_'+id+'_title" class="text-white text-center fs-3 w-100">'                                
+        post += '<span id="title_'+id+'">'+title+'</span>'                           
+        post += '<input hidden id="title_Input_'+id+'" name="title" type="text" class="mb-2 mt-2 rounded border-3 border-primary" value="test"></input></div>'                            
+        post += '<img id="image_displayer_'+id+'" src="'+ imageUrlPost +'" class="img-fluid">'
+        post += '<div hidden id="image-uploader_'+id+'" class="image-upload">'                                
+        post += '<label for="file-input">'
+        post += '<img id="mainImage_'+id+'" src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid rounded"></label>'                            
+        post += '<input id="file-input" type="file" onchange="preview('+id+')"/></div>'                        
+        post += '<div class="p-2"><hr>'
+        post += ' <p id="card_'+id+'_description" class="overflow-auto style-4" style="max-height:150px;">'+description+'</p>'
+        post += '<p id="card_'+id+'_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'                    
+        post += '<hr></div></div>'
+        post += '</form>'
+        post += '</div></div></div></div>'
+
+        document.getElementById('mainContainer').innerHTML += post;        
+    }
+
+    function postTemplate(news)
+    {
+        let title = news['Titre'];
+        let description = news['Description'];
+        let imageUrlPost = news['OriginalURL'];
+        let profileUrl = 'https://i.imgur.com/xhzhaGA.jpg';
+        let date = news['Date']
+        let username = news['Username']
+        let id = news['Id']
+        let post = "";
+        post += '<div class="container mt-5 mb-5">'
+        post += '<div class="row d-flex align-items-center justify-content-center">'
+        post += '<div class="col-md-6">'
+        post += '<div class="card text-white bg-dark shadow">'
+        post += '<div class="d-flex justify-content-between p-2 px-3">'               
+        post += '<div class="d-flex flex-row align-items-center gap-2">'
+        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'                            
+        post += '<div class="d-flex flex-column">'
+        post += '<span class="font-weight-bold">'+ username +'</span>'                                
+        post += '<small class="mr-2">'+ date +'</small></div></div>'
+        post += '<div class="d-flex flex-row mt-1 gap-2">'                                                                           
+        post += '</div></div>'                            
+        post += '<div id="card_'+id+'_title" class="text-white text-center fs-3 w-100">'                                
+        post += '<span id="title_'+id+'">'+title+'</span>'                           
+        post += '</div>'                            
+        post += '<img src="'+ imageUrlPost +'" class="img-fluid">'
+        post += '<div hidden id="image-uploader_'+id+'" class="image-upload">'                                
+        post += '<label for="file-input">'
+        post += '<img id="mainImage_'+id+'" src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid rounded"></label>'                            
+        post += '</div>'                        
+        post += '<div class="p-2"><hr>'
+        post += ' <p id="card_'+id+'_description" class="overflow-auto style-4" style="max-height:150px;">'+description+'</p>'
+        post += '<p id="card_'+id+'_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'                    
+        post += '<hr></div></div>'
+        post += '</div></div></div></div>'
+
+        document.getElementById('mainContainer').innerHTML += post;
+    }
+
+    function updateNewsList(news, Etag)
+    {
+        //let mainContainer = '<div id="mainContainer" class="container overflow-auto style-4" style="margin-top: 80px; height: 91vh;"> </div>';
+        $('#mainContainer').removeClass('d-flex');
+        $('#mainContainer').empty();
+        let loggedUserId = (retrieveLoggedUser() ? retrieveLoggedUser().Id : null);
+        console.log(loggedUserId);
+        news.forEach(post => {
+            if (post.UserId == loggedUserId)
+            {
+                //Propriétaire
+                postTemplateOwner(post);
+                //$('#photoList').append(thumbNail(photo, loggedUserId));
+            }
+            else{
+                console.log(post);
+                postTemplate(post);
+                //Non propriétaire
+            }
+
+            
+        });
+    }
+
+    function modify(id)
+    {
+        let target = 'card_' + id;
+        //console.log(target);
+        let title = document.getElementById('title_' + id).innerHTML;
+        //console.log(title);
+        let description = document.getElementById(target + '_description').innerHTML;
+        //console.log(description)
+        let image = document.getElementById('mainImage_' + id).src;
+        //console.log(image);
+
+        document.getElementById('title_' + id).hidden = true;
+        document.getElementById('title_Input_' + id).hidden = false;
+        document.getElementById('title_' + id).value = title;
+        console.log(document.getElementById('card_'+id+'_glow'));
+        document.getElementById('card_'+id+'_glow').classList.remove('shadow')
+        document.getElementById('card_'+id+'_glow').style.boxShadow = '0 1rem 3rem  #398dff';
+
+        document.getElementById('card_'+id+'_edit_description').hidden = false;
+        //document.getElementById('description_'+id).value = description;
+        document.getElementById('card_'+id+'_description').hidden = true;
+        document.getElementById('image-uploader_' + id).hidden = false;
+        document.getElementById('image_displayer_'+id).hidden = true;
+
+        document.getElementById('btn_cancel_' + id).hidden = false;
+        document.getElementById('edit_btn_'+ id).hidden = true;
+        document.getElementById('btn_delete_'+ id).hidden = true;
+
+        document.getElementById('btn_submit_edit_' + id).hidden = false;
+    }
+
+    function cancelEdit(id)
+    {
+        let target = 'card_' + id;
+        //console.log(target);
+        let title = document.getElementById(target + '_title').innerHTML;
+        //console.log(title);
+        let description = document.getElementById(target + '_description').innerHTML;
+        //console.log(description)
+        let image = document.getElementById('mainImage_' + id).src;
+        //console.log(image);
+
+        document.getElementById('title_' + id).hidden = false;
+        document.getElementById('title_Input_' + id).hidden = true;
+        console.log(document.getElementById('card_'+id+'_glow'));
+        document.getElementById('card_'+id+'_glow').classList.add('shadow')
+        document.getElementById('card_'+id+'_glow').style.boxShadow = 'none';
+
+        document.getElementById('card_'+id+'_edit_description').hidden = true;
+        //document.getElementById('description_'+id).value = description;
+        document.getElementById('card_'+id+'_description').hidden = false;
+        document.getElementById('image-uploader_' + id).hidden = true;
+        document.getElementById('image_displayer_'+id).hidden = false;
+
+        document.getElementById('btn_cancel_'+id).hidden = true;
+        document.getElementById('edit_btn_'+id).hidden = false;
+        document.getElementById('btn_delete_'+id).hidden = false;
+
+        document.getElementById('btn_submit_edit_' + id).hidden = true;
+    }
+    
     function setUsername(username) {
         $("#link_OpenProfilDialog").text(username)
         $("#link_OpenProfilDialog").click(updateProfile);
@@ -427,9 +685,11 @@
     function html_fittedAvatar(Avatar_url, css = '') {
         return "<div class='" + css + "' style='background:url(" + Avatar_url + ") no-repeat center; background-size: cover;'></div>";
     }
+    
     function operationOnGoing() {
         return addMode || editMode || editProfil;
     }
+    
     function preview(id) {
         let image = document.getElementById('registerImage');
         image.src = URL.createObjectURL(event.target.files[0]);
