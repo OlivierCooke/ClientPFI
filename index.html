@@ -34,26 +34,7 @@
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Filter Author
                     </button>
-                    <ul class="dropdown-menu style-4" aria-labelledby="cmbAuthor">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    <ul id="dropdownAuthors" class="dropdown-menu style-4" aria-labelledby="cmbAuthor">                      
                     </ul>
                 </div>
                 <form class="d-flex">
@@ -95,11 +76,8 @@
     </nav>
 
     <!--empty container-->
-    <div id="mainContainer" class="emptyContainer container d-flex overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
-        <!--<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">
-            <img id="imageEmpty" class="img-fluid" src="/assets/empty.png">
-            <span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span>
-        </div>-->
+    <div id="mainContainer" class="emptyContainer container overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
+       
     </div>
 
 
@@ -221,11 +199,13 @@
                         <div class="form-input"> 
                             <input id="createTitle" type="text" class="form-control" placeholder="Title">
                         </div>
-                        <span id="unameError" class="text-center text-danger visually-hidden"> Invalid username</span>
+                        <span id="createTitleError" class="text-center text-danger visually-hidden"> Invalid title</span>
                         <div class="imageDownloader" id="imageCreate" defautimagesrc="assets/user.png"></div>
+                        <span id="imageCreateError" class="text-center text-danger visually-hidden"> There must be an image</span>
                         <div class="form-input">
                             <textarea id="createDescription" class="form-control" placeholder="Describe the news..."></textarea>
                         </div>
+                        <span id="createDescriptionError" class="text-center text-danger visually-hidden"> Invalid description</span>
                         <button id="submitCreate" class="btn btn-primary mt-4">Publish</button>
  
                     </div>
@@ -234,6 +214,27 @@
         </div>
     </div>
     <!--END CreatePostModal-->
+
+    <!-- Validation delete post -->
+    <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h3 class="modal-title flex-fill text-center registerTitle" id="deletePostModalLabel">
+                        Your about to delete this post:<br>
+                        <span id="deleteTitle">Nom du post</span>
+                    </h3>                  
+                </div>
+                <div class="modal-body">
+                    <div id="deletePostForm" class="d-flex flex-row justify-content-center gap-2">
+                        <button id="deletePostConfirmation" type="button" class="btn-danger" data-bs-dismiss="modal" aria-label="Confirm" onclick="deletePost()">Confirm</button>
+                        <button type="button" class="btn-primary" data-bs-dismiss="modal" aria-label="Cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Validation delete post-->
 </body>
 <script src="js/bootstrap.js"></script>
 <script src="js/jquery-3.5.1.js"></script>
@@ -269,7 +270,33 @@
             }, periodicRefreshPeriod * 1000);
     }*/
 
+    function emptyMainContainer(){
+         let filler = '<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">'
+         filler +='<img id="imageEmpty" class="img-fluid" src="/assets/empty.png">' 
+         filler += '<span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span></div>'  
+        
+        $('#mainContainer').addClass('d-flex');
+
+        $('#mainContainer').append(filler);
+    }
+
+    function loadAuthorsNames()
+    {
+        webAPI_AUTHORS(putAuthorsNameInList, AlertError)
+    }
+
+    function putAuthorsNameInList(news){
+        $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">All authors</a></li>');
+        $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">My news</a></li>');
+        news.forEach(element => {
+            $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">'+element+'</a></li>');
+        });                       
+    }
+
     function initUI() {
+
+        emptyMainContainer();
+
         $("#submitLogin").click(Login)
         $('#submitLogout').click(Logout)
         $('#submitRegister').click(validInputRegister)
@@ -351,19 +378,36 @@
 
         let createTitle = $('#createTitle').val();
         let description = $('#createDescription').val();
+        let image = $('#imageCreate_ImageUploader').val();
 
-        console.log('create')
-        console.log(createTitle)
-        console.log(description)
+        console.log(image)
 
         let errorFound = false;
 
         if (!createTitle) {
             errorFound = true;
-            //$('#unameError').removeClass('visually-hidden');
+            $('#createTitleError').removeClass('visually-hidden');
         }
         else {
-            //$('#unameError').addClass('visually-hidden');
+            $('#createTitleError').addClass('visually-hidden');
+        }
+
+        if(!description)
+        {
+            errorFound = true;
+            $('#createDescriptionError').removeClass('visually-hidden');
+        }
+        else{
+            $('#createDescriptionError').addClass('visually-hidden');
+        }
+
+        if(image == "" || image == null || image == undefined)
+        {
+            errorFound = true;
+            $('#imageCreateError').removeClass('visually-hidden');
+        }
+        else{
+            $('#imageCreateError').addClass('visually-hidden');
         }
         
         if (errorFound) {
@@ -473,7 +517,8 @@
     
     function updateUI() {
         updateConnected();
-        //getNews(true);
+        getNews(true);
+        loadAuthorsNames();
     }
 
     function updateConnected() {
@@ -493,7 +538,8 @@
             $('.disconnectedContainer').addClass('visually-hidden')
             $('#loginModal').modal('hide');
             $('#addNews').removeClass('visually-hidden')
-            webAPI_GET_ALL('',updateNewsList,AlertError);
+            $('#mainContainer').removeClass('d-felx');
+            $('#mainContainer').empty();
         }
         else {
             $("#avatarContainer").empty();
@@ -532,7 +578,7 @@
         post += '<button hidden id="btn_submit_edit_'+id+'" class="btn btn-outline-primary rounded-circle" type="submit"><i class="bi bi-check-lg"></i></button>'                            
         post += '<button hidden id="btn_cancel_'+id+'" class="btn btn-outline-primary rounded-circle" onclick="cancelEdit(' +id+ ')">'                                
         post += '<i class="bi bi-x-lg"></i></button>'                            
-        post += '<button id="btn_delete_'+ id +'" class="btn btn-outline-primary rounded-circle" onclick="deletePost()">'                            
+        post += '<button id="btn_delete_'+ id +'" class="btn btn-outline-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#deletePostModal" onclick="deletePost('+id+')">'                            
         post += '<i class="bi bi-x-lg"></i></button></div></div>'                            
         post += '<div id="card_'+id+'_title" class="text-white text-center fs-3 w-100">'                                
         post += '<span id="title_'+id+'">'+title+'</span>'                           
@@ -591,13 +637,20 @@
         document.getElementById('mainContainer').innerHTML += post;
     }
 
+    function getNews(forceRefreshphotoList = false)
+    {
+        if (forceRefreshphotoList) {
+            webAPI_GET_ALL('',updateNewsList,AlertError);
+            } else
+                webAPI_HEAD(checkETag, AlertError);
+    }
+
     function updateNewsList(news, Etag)
     {
         //let mainContainer = '<div id="mainContainer" class="container overflow-auto style-4" style="margin-top: 80px; height: 91vh;"> </div>';
         $('#mainContainer').removeClass('d-flex');
         $('#mainContainer').empty();
         let loggedUserId = (retrieveLoggedUser() ? retrieveLoggedUser().Id : null);
-        console.log(loggedUserId);
         news.forEach(post => {
             if (post.UserId == loggedUserId)
             {
@@ -606,7 +659,6 @@
                 //$('#photoList').append(thumbNail(photo, loggedUserId));
             }
             else{
-                console.log(post);
                 postTemplate(post);
                 //Non propriétaire
             }
@@ -644,6 +696,16 @@
         document.getElementById('btn_delete_'+ id).hidden = true;
 
         document.getElementById('btn_submit_edit_' + id).hidden = false;
+    }
+
+    function deletePost(id){
+        $('#deletePostConfirmation').click(()=>{deletePostConfirm(id)})
+    }
+
+    function deletePostConfirm(id)
+    {
+        console.log('delete')
+        webAPI_DELETE(id, updateUI, AlertError)
     }
 
     function cancelEdit(id)

@@ -190,7 +190,7 @@ function webAPI_PUT(data, successCallBack, errorCallBack) {
 }
 function webAPI_DELETE(id, successCallBack, errorCallBack) {
     $.ajax({
-        url: apiBaseURL + "/api/images" + "/" + id,
+        url: apiBaseURL + "/api/news" + "/" + id,
         contentType: 'text/plain',
         type: 'DELETE',
         headers: getBearerAuthorizationToken(),
@@ -201,6 +201,27 @@ function webAPI_DELETE(id, successCallBack, errorCallBack) {
         }
     });
 }
+
+function webAPI_AUTHORS(successCallBack, errorCallBack) {
+    $.ajax({
+        url: apiBaseURL + "/news/authors",
+        contentType: 'text/plain',
+        type: 'GET',
+        headers: getBearerAuthorizationToken(),
+        success: (data, status, xhr) => { 
+            console.log(data);
+            let ETag = xhr.getResponseHeader("ETag");
+            successCallBack(data, ETag);
+        },
+        error: function (jqXHR) {
+            errorCallBack(jqXHR.status);
+            console.log("webAPI_DELETE - error");
+        }
+    });
+}
+
+
+
 function webAPI_DELETE_Account(id, successCallBack, errorCallBack) {
     $.ajax({
         url: apiBaseURL + "/accounts/remove/" + id,
