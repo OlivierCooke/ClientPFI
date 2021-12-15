@@ -13,15 +13,15 @@ $(() => {
     $('.imageDownloader').each(function () {
         let id = $(this).attr('id');
         let defaultImage = $(this).attr('defautImageSrc');
-        $(this).append('<img id="' +
+        $(this).append('<img id="e_' +
             id +
             '_UploadedImage" class="UploadedImage" src="' +
             defaultImage +
             '">');
-        $(this).append('<input type="hidden" id="' +
+        $(this).append('<input type="hidden" id="e_' +
             id +
             '_ImageData" value="">');
-        $(this).append('<input id="' +
+        $(this).append('<input id="e_' +
             id +
             '_ImageUploader" type="file" ' +
             'style="display:none" accept="image/jpeg,image/gif,image/png,image/bmp">');
@@ -30,66 +30,91 @@ $(() => {
 })
 
 function createUploader() {
+    $('.imageDownloader').empty()
     $('.imageDownloader').each(function () {
 
         let id = $(this).attr('id');
         let defaultImage = $(this).attr('defautImageSrc');
-        $(this).append('<img id="' +
+        $(this).append('<img id="e_' +
             id +
             '_UploadedImage" class="UploadedImage" src="' +
             defaultImage +
             '">');
-        $(this).append('<input type="hidden" id="' +
+        $(this).append('<input type="hidden" id="e_' +
             id +
             '_ImageData" value="">');
-        $(this).append('<input id="' +
+        $(this).append('<input id="e_' +
             id +
             '_ImageUploader" type="file" ' +
             'style="display:none" accept="image/jpeg,image/gif,image/png,image/bmp">');
         ImageUploader_AttachEvent(id);
     })
 }
+
+function createSpecificUploader(id, src = '') {
+    //passing id for specific targetting
+    let imageDownloader = $('#imagePost_' + id);
+    imageDownloader.empty();
+    let defaultImage = imageDownloader.attr('defautImageSrc');
+    imageDownloader.append('<img id="e_' +
+        id +
+        '_UploadedImage" class="UploadedImage" src="' +
+        defaultImage +
+        '">');
+    imageDownloader.append('<input type="hidden" id="e_' +
+        id +
+        '_ImageData" value="">');
+    imageDownloader.append('<input id="e_' +
+        id +
+        '_ImageUploader" type="file" ' +
+        'style="display:none" accept="image/jpeg,image/gif,image/png,image/bmp">');
+    ImageUploader_AttachEvent(id);
+    if (src != '')
+        setImageDownloaderImage(id, src)
+}
+
+
 function setImageDownloaderBlankImage(id) {
-    $('#' + id + '_UploadedImage').attr("src", "images/No_image.png");
+    $('#e_' + id + '_UploadedImage').attr("src", "images/No_image.png");
 }
 function setImageDownloaderImage(id, url) {
-    $('#' + id + '_UploadedImage').attr("src", url);
+    $('#e_' + id + '_UploadedImage').attr("src", url);
 }
 
 
 
 function ImageUploader_AttachEvent(id) {
-    document.querySelector('#' + id + '_ImageUploader').addEventListener('change', preLoadImage);
+    document.querySelector('#e_' + id + '_ImageUploader').addEventListener('change', preLoadImage);
     // un click sur l'image sera transmis au input #ImageUploader
-    document.querySelector('#' + id + '_UploadedImage').addEventListener('click', () => {
-        document.querySelector('#' + id + '_ImageUploader').click();
+    document.querySelector('#e_' + id + '_UploadedImage').addEventListener('click', () => {
+        document.querySelector('#e_' + id + '_ImageUploader').click();
     });
 }
 
 function clearImageData(id) {
-    document.querySelector('#' + id + '_ImageData').value = "";
+    document.querySelector('#e_' + id + '_ImageData').value = "";
 }
 function getImageData(id) {
-    return document.querySelector('#' + id + '_ImageData').value;
+    return document.querySelector('#e_' + id + '_ImageData').value;
 }
 function setImageData(id, value) {
-    document.querySelector('#' + id + '_ImageData').value = value;
+    document.querySelector('#e_' + id + '_ImageData').value = value;
 }
 
 function resetUploadedImageSrc(id) {
-    let defautImage = $('#' + id).attr('defautImageSrc');
-    $('#' + id + '_UploadedImage').attr('src', defautImage);
+    let defautImage = $('#e_' + id).attr('defautImageSrc');
+    $('#e_' + id + '_UploadedImage').attr('src', defautImage);
 }
 
 function setUploadedImageSrc(id, src) {
-    document.querySelector('#' + id + '_UploadedImage').setAttribute('src', src);
+    document.querySelector('#e_' + id + '_UploadedImage').setAttribute('src', src);
 }
 
 function preLoadImage(event) {
-    let id = event.target.id.split('_')[0];
-    let UploadedImage = document.querySelector('#' + id + '_UploadedImage');
-    let ImageUploader = document.querySelector('#' + id + '_ImageUploader');
-    let ImageData = document.querySelector('#' + id + '_ImageData');
+    let id = event.target.id.split('_')[1];
+    let UploadedImage = document.querySelector('#e_' + id + '_UploadedImage');
+    let ImageUploader = document.querySelector('#e_' + id + '_ImageUploader');
+    let ImageData = document.querySelector('#e_' + id + '_ImageData');
     if (UploadedImage !== null) {
         let len = ImageUploader.value.length;
 

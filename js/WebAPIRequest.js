@@ -208,8 +208,7 @@ function webAPI_AUTHORS(successCallBack, errorCallBack) {
         contentType: 'text/plain',
         type: 'GET',
         headers: getBearerAuthorizationToken(),
-        success: (data, status, xhr) => { 
-            console.log(data);
+        success: (data, status, xhr) => {
             let ETag = xhr.getResponseHeader("ETag");
             successCallBack(data, ETag);
         },

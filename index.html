@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
 </head>
 
-<body>
+<body class="style-4">
     <!-- navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark shadow">
         <div class="container-fluid gap-2">
@@ -25,8 +25,8 @@
             </a>
 
             <div class="collapse navbar-collapse flex-grow-0 gap-2" id="navbarSupportedContent">
-                <button type="button" class="btn btn-outline-primary shadow-sm visually-hidden" id="addNews" data-bs-toggle="modal"
-                data-bs-target="#createModal">
+                <button type="button" class="btn btn-outline-primary shadow-sm visually-hidden" id="addNews"
+                    data-bs-toggle="modal" data-bs-target="#createModal">
                     <i class="bi bi-plus-lg"></i>
                 </button>
                 <div class="dropdown">
@@ -34,7 +34,7 @@
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Filter Author
                     </button>
-                    <ul id="dropdownAuthors" class="dropdown-menu style-4" aria-labelledby="cmbAuthor">                      
+                    <ul id="dropdownAuthors" class="dropdown-menu style-4" aria-labelledby="cmbAuthor">
                     </ul>
                 </div>
                 <form class="d-flex">
@@ -76,13 +76,14 @@
     </nav>
 
     <!--empty container-->
-    <div id="mainContainer" class="emptyContainer container overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
-       
+    <div id="mainContainer" class="container overflow-auto style-4" style="margin-top: 80px; height: 91vh;">
+
     </div>
 
 
     <!-- RegisterModal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="RegisterModalLabel" aria-hidden="true">
+    <div class="modal fade style-4" id="registerModal" tabindex="-1" aria-labelledby="RegisterModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
@@ -118,7 +119,8 @@
     <!-- END RegisterModal -->
 
     <!-- UpdateModal -->
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="UpdateModalLabel" aria-hidden="true">
+    <div class="modal fade style-4" id="updateModal" tabindex="-1" aria-labelledby="UpdateModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
@@ -127,6 +129,7 @@
                 </div>
                 <div class="modal-body">
                     <div id="updateForm" class="d-grid gap-2">
+                        <input type="hidden" id="avatarGUID" value="">
                         <div class="form-input"> <input id="updateUname" type="text" class="form-control"
                                 placeholder="Username">
                         </div>
@@ -137,12 +140,11 @@
                         </div>
                         <span id="emailErrorUpdate" class="text-center text-danger visually-hidden"> Invalid
                             email</span>
-                        <div class="form-input"> <input id="updatePassword" type="text" class="form-control"
+                        <div class="form-input"> <input id="updatePassword" type="password" class="form-control"
                                 placeholder="Password">
-                        </div><span id="passwordErrorUpdate" class="text-center text-danger visually-hidden"> Invalid
-                            password</span>
-                        <div class="form-input"> <input id="updatePasswordConfirmation" type="text" class="form-control"
-                                placeholder="Confirm Password">
+                        </div>
+                        <div class="form-input"> <input id="updatePasswordConfirmation" type="password"
+                                class="form-control" placeholder="Confirm Password">
                         </div>
                         <span id="passwordCErrorUpdate" class="text-center text-danger visually-hidden"> Passwords are
                             not the
@@ -157,7 +159,7 @@
     <!-- END UpdateModal -->
 
     <!-- LoginModal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
+    <div class="modal fade style-4" id="loginModal" tabindex="-1" aria-labelledby="LoginModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
@@ -187,27 +189,33 @@
     <!-- END LoginModal -->
 
     <!--CreatePostModal-->
-    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal fade style-4" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
-                    <h2 class="modal-title flex-fill text-center registerTitle" id="createModalLabel">Share the news</h2>
+                    <h2 class="modal-title flex-fill text-center registerTitle" id="createModalLabel">Share the news
+                    </h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="createForm" class="d-grid gap-2">
-                        <div class="form-input"> 
+                        <div class="form-input">
                             <input id="createTitle" type="text" class="form-control" placeholder="Title">
                         </div>
-                        <span id="createTitleError" class="text-center text-danger visually-hidden"> Invalid title</span>
+                        <span id="createTitleError" class="text-center text-danger visually-hidden"> Invalid
+                            title</span>
                         <div class="imageDownloader" id="imageCreate" defautimagesrc="assets/user.png"></div>
-                        <span id="imageCreateError" class="text-center text-danger visually-hidden"> There must be an image</span>
+                        <span id="imageCreateError" class="text-center text-danger visually-hidden"> There must be an
+                            image</span>
                         <div class="form-input">
-                            <textarea id="createDescription" class="form-control" placeholder="Describe the news..."></textarea>
+                            <textarea id="createDescription" class="form-control overflow-auto style-4"
+                                placeholder="Describe the news..."></textarea>
                         </div>
-                        <span id="createDescriptionError" class="text-center text-danger visually-hidden"> Invalid description</span>
+                        <span id="createDescriptionError" class="text-center text-danger visually-hidden"> Invalid
+                            description</span>
                         <button id="submitCreate" class="btn btn-primary mt-4">Publish</button>
- 
+
                     </div>
                 </div>
             </div>
@@ -216,19 +224,22 @@
     <!--END CreatePostModal-->
 
     <!-- Validation delete post -->
-    <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true">
+    <div class="modal fade style-4" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header justify-content-center">
                     <h3 class="modal-title flex-fill text-center registerTitle" id="deletePostModalLabel">
                         Your about to delete this post:<br>
                         <span id="deleteTitle">Nom du post</span>
-                    </h3>                  
+                    </h3>
                 </div>
                 <div class="modal-body">
                     <div id="deletePostForm" class="d-flex flex-row justify-content-center gap-2">
-                        <button id="deletePostConfirmation" type="button" class="btn-danger" data-bs-dismiss="modal" aria-label="Confirm" onclick="deletePost()">Confirm</button>
-                        <button type="button" class="btn-primary" data-bs-dismiss="modal" aria-label="Cancel">Cancel</button>
+                        <button id="deletePostConfirmation" type="button" class="btn-danger" data-bs-dismiss="modal"
+                            aria-label="Confirm">Confirm</button>
+                        <button type="button" class="btn-primary" data-bs-dismiss="modal"
+                            aria-label="Cancel">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -270,27 +281,26 @@
             }, periodicRefreshPeriod * 1000);
     }*/
 
-    function emptyMainContainer(){
-         let filler = '<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">'
-         filler +='<img id="imageEmpty" class="img-fluid" src="/assets/empty.png">' 
-         filler += '<span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span></div>'  
-        
+    function emptyMainContainer() {
+        let filler = '<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">'
+        filler += '<img id="imageEmpty" class="img-fluid" src="/assets/empty.png">'
+        filler += '<span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span></div>'
+
         $('#mainContainer').addClass('d-flex');
 
         $('#mainContainer').append(filler);
     }
 
-    function loadAuthorsNames()
-    {
+    function loadAuthorsNames() {
         webAPI_AUTHORS(putAuthorsNameInList, AlertError)
     }
 
-    function putAuthorsNameInList(news){
+    function putAuthorsNameInList(news) {
         $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">All authors</a></li>');
         $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">My news</a></li>');
         news.forEach(element => {
-            $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">'+element+'</a></li>');
-        });                       
+            $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">' + element + '</a></li>');
+        });
     }
 
     function initUI() {
@@ -349,6 +359,7 @@
             $('#registerPasswordConfirmation').val('');
             $('.imageDownloader').empty();
             $('.imageDownloader').attr('defautimagesrc', '/assets/user.png')
+            $('#avatarUpdate_ImageData').val()
             createUploader()
         });
         $('#registerModal').on('hidden.bs.modal', function (event) {
@@ -363,24 +374,42 @@
             createUploader()
         });
 
+
+
         $('#updateModal').on('hidden.bs.modal', function (event) {
             pauseNewsListPeriodicRefresh = false;
 
             $('#emailErrorUpdate').addClass('visually-hidden');
             $('#unameErrorUpdate').addClass('visually-hidden');
             $('#passwordCErrorUpdate').addClass('visually-hidden');
-            $('#passwordErrorUpdate').addClass('visually-hidden');
+            $('#updatePassword').val('');
+            $('#updatePasswordConfirmation').val('');
+
+            $('.imageDownloader').empty();
+            $('.imageDownloader').attr('defautimagesrc', '/assets/user.png')
+            createUploader()
+        });
+        $('#createModal').on('hidden.bs.modal', function (event) {
+            pauseNewsListPeriodicRefresh = false;
+
+            $('#createTitleError').addClass('visually-hidden');
+            $('#imageCreateError').addClass('visually-hidden');
+            $('#createDescriptionError').addClass('visually-hidden');
+            $('#createTitle').val('');
+            $('#createDescription').val('');
+            $('.imageDownloader').empty();
+            $('.imageDownloader').attr('defautimagesrc', '/assets/user.png')
+            createUploader()
+
         })
     }
 
-    function create(e){
+    function create(e) {
         //webAPI_POST
 
         let createTitle = $('#createTitle').val();
         let description = $('#createDescription').val();
         let image = $('#imageCreate_ImageUploader').val();
-
-        console.log(image)
 
         let errorFound = false;
 
@@ -392,39 +421,36 @@
             $('#createTitleError').addClass('visually-hidden');
         }
 
-        if(!description)
-        {
+        if (!description) {
             errorFound = true;
             $('#createDescriptionError').removeClass('visually-hidden');
         }
-        else{
+        else {
             $('#createDescriptionError').addClass('visually-hidden');
         }
 
-        if(image == "" || image == null || image == undefined)
-        {
+        if (image == "" || image == null || image == undefined) {
             errorFound = true;
             $('#imageCreateError').removeClass('visually-hidden');
         }
-        else{
+        else {
             $('#imageCreateError').addClass('visually-hidden');
         }
-        
+
         if (errorFound) {
             console.log('errorFound')
             e.preventDefault()
         }
         else {
-            console.log('call')
             let userLog = retrieveLoggedUser();
             let data = {
                 Id: 0,
-                UserId: userLog['Id'], 
+                UserId: userLog['Id'],
                 Titre: createTitle,
                 Description: description,
                 ImageData: getImageData('imageCreate')
             }
-            webAPI_POST(data, () => { $('#createModal').modal('hide'); ()=>{console.log('create réussi')}; }, AlertError);
+            webAPI_POST(data, () => { $('#createModal').modal('hide'); () => { console.log('create réussi') }; }, AlertError);
         }
     }
 
@@ -447,13 +473,10 @@
         if (connected) {
             let profile = retrieveLoggedUser()
             $('#updateModal').modal('show');
+            $('#avatarGUID').val(profile.AvatarGUID)
             $('#updateUname').val(profile.Name)
             $('#updateEmail').val(profile.Email)
-            $('#updatePassword').val(profile.Password)
-            $('#updatePasswordConfirmation').val(profile.Password)
-            $('.imageDownloader').empty();
-            $('.imageDownloader').attr('defautimagesrc', profile.AvatarURL)
-            createUploader()
+            setImageDownloaderImage('avatarUpdate', retrieveLoggedUser().AvatarURL)
             editProfil = true
         }
     }
@@ -464,16 +487,16 @@
         deConnect();
         updateUI(true);
     }
-    
+
     function generateSeed() {
         let r = (Math.random() + 1).toString(36).substring(2);
         return r;
     }
-    
+
     function Logout() {
         webAPI_logout(retrieveLoggedUser().Id, updateUI, AlertError)
     }
-    
+
     function statusToString(status) {
         let text = "Le server ne répond pas.";
         switch (status) {
@@ -483,7 +506,7 @@
         }
         return text;
     }
-    
+
     function AlertError(status) {
         $.confirm({
             title: '<img src="assets/error.png" style="width:40px;margin:10px" alt="httpError"/>Encountered an error!',
@@ -505,7 +528,7 @@
             }
         });
     }
-    
+
     function Login() {
         webAPI_login($("#loginEmail").val(),
             $("#loginPassword").val(),
@@ -514,10 +537,11 @@
                 $('#errorLogin').removeClass('visually-hidden')
             })
     }
-    
+
     function updateUI() {
         updateConnected();
-        getNews(true);
+        if (connected)
+            getNews(true);
         loadAuthorsNames();
     }
 
@@ -538,7 +562,6 @@
             $('.disconnectedContainer').addClass('visually-hidden')
             $('#loginModal').modal('hide');
             $('#addNews').removeClass('visually-hidden')
-            $('#mainContainer').removeClass('d-felx');
             $('#mainContainer').empty();
         }
         else {
@@ -547,11 +570,12 @@
             $('.connectedContainer').addClass('visually-hidden')
             $('.disconnectedContainer').removeClass('visually-hidden')
             $('#addNews').addClass('visually-hidden')
+            $('#mainContainer').empty();
+            emptyMainContainer();
         }
     }
 
-    function postTemplateOwner(news)
-    {
+    function postTemplateOwner(news) {
         let title = news['Titre'];
         let description = news['Description'];
         let imageUrlPost = news['OriginalURL'];
@@ -559,47 +583,43 @@
         let date = news['Date']
         let username = news['Username']
         let id = news['Id']
-
+        let iupParam = '\"' + imageUrlPost + '\"';
         let post = "";
         post += '<div class="container mt-5 mb-5">'
         post += '<div class="row d-flex align-items-center justify-content-center">'
         post += '<div class="col-md-6">'
         //post += '<form action="#" method="post">'
-        post += '<div id="card_'+ id +'_glow" class="card text-white bg-dark shadow">'
-        post += '<div class="d-flex justify-content-between p-2 px-3">'               
+        post += '<div id="card_' + id + '_glow" class="card text-white bg-dark shadow">'
+        post += '<div class="d-flex justify-content-between p-2 px-3">'
         post += '<div class="d-flex flex-row align-items-center gap-2">'
-        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'                            
+        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'
         post += '<div class="d-flex flex-column">'
-        post += '<span class="font-weight-bold">'+ username +'</span>'                                
-        post += '<small class="mr-2">'+ date +'</small></div></div>'
-        post += '<div class="d-flex flex-row mt-1 gap-2">'                            
-        post += '<button id="edit_btn_'+ id +'" class="btn btn-outline-primary rounded-circle" onclick="modify('+id+')">'                        
-        post += '<i class="bi bi-pencil"></i></button>'                     
-        post += '<button hidden id="btn_submit_edit_'+id+'" class="btn btn-outline-primary rounded-circle" type="submit"><i class="bi bi-check-lg"></i></button>'                            
-        post += '<button hidden id="btn_cancel_'+id+'" class="btn btn-outline-primary rounded-circle" onclick="cancelEdit(' +id+ ')">'                                
-        post += '<i class="bi bi-x-lg"></i></button>'                            
-        post += '<button id="btn_delete_'+ id +'" class="btn btn-outline-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#deletePostModal" onclick="deletePost('+id+')">'                            
-        post += '<i class="bi bi-x-lg"></i></button></div></div>'                            
-        post += '<div id="card_'+id+'_title" class="text-white text-center fs-3 w-100">'                                
-        post += '<span id="title_'+id+'">'+title+'</span>'                           
-        post += '<input hidden id="title_Input_'+id+'" name="title" type="text" class="mb-2 mt-2 rounded border-3 border-primary" value="test"></input></div>'                            
-        post += '<img id="image_displayer_'+id+'" src="'+ imageUrlPost +'" class="img-fluid">'
-        post += '<div hidden id="image-uploader_'+id+'" class="image-upload">'                                
-        post += '<label for="file-input">'
-        post += '<img id="mainImage_'+id+'" src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid rounded"></label>'                            
-        post += '<input id="file-input" type="file" onchange="preview('+id+')"/></div>'                        
+        post += '<span class="font-weight-bold">' + username + '</span>'
+        post += '<small class="mr-2">' + date + '</small></div></div>'
+        post += '<div class="d-flex flex-row mt-1 gap-2">'
+        post += '<button id="edit_btn_' + id + '" class="btn btn-outline-primary rounded-circle btnEdit" urlImage="' + imageUrlPost + '">'
+        post += '<i class="bi bi-pencil"></i></button>'
+        post += '<button hidden id="btn_submit_edit_' + id + '" class="btn btn-outline-primary rounded-circle" type="submit"><i class="bi bi-check-lg"></i></button>'
+        post += '<button hidden id="btn_cancel_' + id + '" class="btn btn-outline-primary rounded-circle" onclick="cancelEdit(' + id + ')">'
+        post += '<i class="bi bi-x-lg"></i></button>'
+        post += '<button id="btn_delete_' + id + '" class="btn btn-outline-primary rounded-circle" data-bs-toggle="modal" data-bs-target="#deletePostModal" onclick="deletePost(' + id + ')">'
+        post += '<i class="bi bi-x-lg"></i></button></div></div>'
+        post += '<div id="card_' + id + '_title" class="text-white text-center fs-3 w-100">'
+        post += '<span id="title_' + id + '">' + title + '</span>'
+        post += '<input hidden id="title_Input_' + id + '" name="title" type="text" class="mb-2 mt-2 rounded border-3 border-primary" value="test"></input></div>'
+        post += '<img id="image_displayer_' + id + '" src="' + imageUrlPost + '" class="img-fluid">'
+        post += '<div class="visually-hidden" id="imagePost_' + id + '"defautimagesrc="' + imageUrlPost + '"></div>';
         post += '<div class="p-2"><hr>'
-        post += ' <p id="card_'+id+'_description" class="overflow-auto style-4" style="max-height:150px;">'+description+'</p>'
-        post += '<p id="card_'+id+'_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'                    
+        post += ' <p id="card_' + id + '_description" class="overflow-auto style-4" style="max-height:150px;">' + description + '</p>'
+        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'
         post += '<hr></div></div>'
         post += '</form>'
         post += '</div></div></div></div>'
 
-        document.getElementById('mainContainer').innerHTML += post;        
+        document.getElementById('mainContainer').innerHTML += post;
     }
 
-    function postTemplate(news)
-    {
+    function postTemplate(news) {
         let title = news['Titre'];
         let description = news['Description'];
         let imageUrlPost = news['OriginalURL'];
@@ -612,132 +632,132 @@
         post += '<div class="row d-flex align-items-center justify-content-center">'
         post += '<div class="col-md-6">'
         post += '<div class="card text-white bg-dark shadow">'
-        post += '<div class="d-flex justify-content-between p-2 px-3">'               
+        post += '<div class="d-flex justify-content-between p-2 px-3">'
         post += '<div class="d-flex flex-row align-items-center gap-2">'
-        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'                            
+        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'
         post += '<div class="d-flex flex-column">'
-        post += '<span class="font-weight-bold">'+ username +'</span>'                                
-        post += '<small class="mr-2">'+ date +'</small></div></div>'
-        post += '<div class="d-flex flex-row mt-1 gap-2">'                                                                           
-        post += '</div></div>'                            
-        post += '<div id="card_'+id+'_title" class="text-white text-center fs-3 w-100">'                                
-        post += '<span id="title_'+id+'">'+title+'</span>'                           
-        post += '</div>'                            
-        post += '<img src="'+ imageUrlPost +'" class="img-fluid">'
-        post += '<div hidden id="image-uploader_'+id+'" class="image-upload">'                                
+        post += '<span class="font-weight-bold">' + username + '</span>'
+        post += '<small class="mr-2">' + date + '</small></div></div>'
+        post += '<div class="d-flex flex-row mt-1 gap-2">'
+        post += '</div></div>'
+        post += '<div id="card_' + id + '_title" class="text-white text-center fs-3 w-100">'
+        post += '<span id="title_' + id + '">' + title + '</span>'
+        post += '</div>'
+        post += '<img src="' + imageUrlPost + '" class="img-fluid">'
+        post += '<div hidden id="image-uploader_' + id + '" class="image-upload">'
         post += '<label for="file-input">'
-        post += '<img id="mainImage_'+id+'" src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid rounded"></label>'                            
-        post += '</div>'                        
+        post += '<img id="mainImage_' + id + '" src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid rounded"></label>'
+        post += '</div>'
         post += '<div class="p-2"><hr>'
-        post += ' <p id="card_'+id+'_description" class="overflow-auto style-4" style="max-height:150px;">'+description+'</p>'
-        post += '<p id="card_'+id+'_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'                    
+        post += ' <p id="card_' + id + '_description" class="overflow-auto style-4" style="max-height:150px;">' + description + '</p>'
+        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'
         post += '<hr></div></div>'
         post += '</div></div></div></div>'
 
         document.getElementById('mainContainer').innerHTML += post;
     }
 
-    function getNews(forceRefreshphotoList = false)
-    {
+    function getNews(forceRefreshphotoList = false) {
         if (forceRefreshphotoList) {
-            webAPI_GET_ALL('',updateNewsList,AlertError);
-            } else
-                webAPI_HEAD(checkETag, AlertError);
+            webAPI_GET_ALL('?sort=Date,desc', updateNewsList, AlertError);
+        } else
+            webAPI_HEAD(checkETag, AlertError);
     }
 
-    function updateNewsList(news, Etag)
-    {
+    function updateNewsList(news, Etag) {
         //let mainContainer = '<div id="mainContainer" class="container overflow-auto style-4" style="margin-top: 80px; height: 91vh;"> </div>';
         $('#mainContainer').removeClass('d-flex');
         $('#mainContainer').empty();
         let loggedUserId = (retrieveLoggedUser() ? retrieveLoggedUser().Id : null);
         news.forEach(post => {
-            if (post.UserId == loggedUserId)
-            {
+            if (post.UserId == loggedUserId) {
                 //Propriétaire
                 postTemplateOwner(post);
                 //$('#photoList').append(thumbNail(photo, loggedUserId));
             }
-            else{
+            else {
                 postTemplate(post);
                 //Non propriétaire
             }
 
-            
         });
+
+        $('.btnEdit').click((e) => {
+            let id = e.currentTarget.id.split('_')[2];
+            let url = e.currentTarget.getAttribute("urlimage");
+            modify(id, url)
+        })
+
     }
 
-    function modify(id)
-    {
+    function modify(id, url) {
+        createSpecificUploader(id, url)
         let target = 'card_' + id;
         //console.log(target);
         let title = document.getElementById('title_' + id).innerHTML;
         //console.log(title);
         let description = document.getElementById(target + '_description').innerHTML;
         //console.log(description)
-        let image = document.getElementById('mainImage_' + id).src;
         //console.log(image);
 
         document.getElementById('title_' + id).hidden = true;
         document.getElementById('title_Input_' + id).hidden = false;
         document.getElementById('title_' + id).value = title;
-        console.log(document.getElementById('card_'+id+'_glow'));
-        document.getElementById('card_'+id+'_glow').classList.remove('shadow')
-        document.getElementById('card_'+id+'_glow').style.boxShadow = '0 1rem 3rem  #398dff';
+        document.getElementById('card_' + id + '_glow').classList.remove('shadow')
+        document.getElementById('card_' + id + '_glow').style.boxShadow = '0 1rem 3rem  #398dff';
 
-        document.getElementById('card_'+id+'_edit_description').hidden = false;
+        document.getElementById('card_' + id + '_edit_description').hidden = false;
         //document.getElementById('description_'+id).value = description;
-        document.getElementById('card_'+id+'_description').hidden = true;
-        document.getElementById('image-uploader_' + id).hidden = false;
-        document.getElementById('image_displayer_'+id).hidden = true;
+        document.getElementById('card_' + id + '_description').hidden = true;
+        $('#imagePost_' + id).removeClass('visually-hidden')
+
+        document.getElementById('image_displayer_' + id).hidden = true;
 
         document.getElementById('btn_cancel_' + id).hidden = false;
-        document.getElementById('edit_btn_'+ id).hidden = true;
-        document.getElementById('btn_delete_'+ id).hidden = true;
+        document.getElementById('edit_btn_' + id).hidden = true;
+        document.getElementById('btn_delete_' + id).hidden = true;
 
         document.getElementById('btn_submit_edit_' + id).hidden = false;
+
+
+
     }
 
-    function deletePost(id){
-        $('#deletePostConfirmation').click(()=>{deletePostConfirm(id)})
+    function deletePost(id) {
+        $('#deletePostConfirmation').click(() => { deletePostConfirm(id) })
     }
 
-    function deletePostConfirm(id)
-    {
-        console.log('delete')
+    function deletePostConfirm(id) {
         webAPI_DELETE(id, updateUI, AlertError)
     }
 
-    function cancelEdit(id)
-    {
+    function cancelEdit(id) {
         let target = 'card_' + id;
         //console.log(target);
         let title = document.getElementById(target + '_title').innerHTML;
         //console.log(title);
         let description = document.getElementById(target + '_description').innerHTML;
-        //console.log(description)
-        let image = document.getElementById('mainImage_' + id).src;
         //console.log(image);
 
         document.getElementById('title_' + id).hidden = false;
         document.getElementById('title_Input_' + id).hidden = true;
-        console.log(document.getElementById('card_'+id+'_glow'));
-        document.getElementById('card_'+id+'_glow').classList.add('shadow')
-        document.getElementById('card_'+id+'_glow').style.boxShadow = 'none';
+        console.log(document.getElementById('card_' + id + '_glow'));
+        document.getElementById('card_' + id + '_glow').classList.add('shadow')
+        document.getElementById('card_' + id + '_glow').style.boxShadow = 'none';
 
-        document.getElementById('card_'+id+'_edit_description').hidden = true;
+        document.getElementById('card_' + id + '_edit_description').hidden = true;
         //document.getElementById('description_'+id).value = description;
-        document.getElementById('card_'+id+'_description').hidden = false;
-        document.getElementById('image-uploader_' + id).hidden = true;
-        document.getElementById('image_displayer_'+id).hidden = false;
+        document.getElementById('card_' + id + '_description').hidden = false;
+        document.getElementById('image_displayer_' + id).hidden = false;
+        $('#imagePost').addClass('visually-hidden');
 
-        document.getElementById('btn_cancel_'+id).hidden = true;
-        document.getElementById('edit_btn_'+id).hidden = false;
-        document.getElementById('btn_delete_'+id).hidden = false;
+        document.getElementById('btn_cancel_' + id).hidden = true;
+        document.getElementById('edit_btn_' + id).hidden = false;
+        document.getElementById('btn_delete_' + id).hidden = false;
 
         document.getElementById('btn_submit_edit_' + id).hidden = true;
     }
-    
+
     function setUsername(username) {
         $("#link_OpenProfilDialog").text(username)
         $("#link_OpenProfilDialog").click(updateProfile);
@@ -747,11 +767,11 @@
     function html_fittedAvatar(Avatar_url, css = '') {
         return "<div class='" + css + "' style='background:url(" + Avatar_url + ") no-repeat center; background-size: cover;'></div>";
     }
-    
+
     function operationOnGoing() {
         return addMode || editMode || editProfil;
     }
-    
+
     function preview(id) {
         let image = document.getElementById('registerImage');
         image.src = URL.createObjectURL(event.target.files[0]);
@@ -812,15 +832,15 @@
     /*
         PAS TOUCHE AU UPDATE PROFILE .... CA CHIE LE PROFILE QUE TU UTILISE... JE SAIS COMMENT FIX... LAISSE MOI FAIRE :D
     */
-    function saveChanges() {
+    function saveChanges(e) {
         let regexEmail = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$/
+        let avatarGUID = $("#avatarGUID").val();
         let email = $('#updateEmail').val();
         let username = $('#updateUname').val();
         let confirmPassword = $('#updatePasswordConfirmation').val();
         let password = $('#updatePassword').val();
         let errorFound = false;
         let id = retrieveLoggedUser().Id
-        console.log(retrieveLoggedUser.Password)
 
         if (!regexEmail.test(email)) {
             errorFound = true;
@@ -843,18 +863,12 @@
         else {
             $('#passwordCErrorUpdate').addClass('visually-hidden');
         }
-        if (!password) {
-            errorFound = true;
-            $('#passwordErrorUpdate').removeClass('visually-hidden');
-        }
-        else {
-            $('#passwordErrorUpdate').addClass('visually-hidden');
-        }
         if (errorFound) {
             e.preventDefault()
         }
         else {
             let data = {
+                AvatarGUID: avatarGUID,
                 Id: id,
                 Name: username,
                 Email: email,
@@ -862,7 +876,7 @@
                 ImageData: getImageData('avatarUpdate')
             }
             console.log(data)
-            //webAPI_ChangeProfil(data, () => { $('#updateModal').modal('hide'); updateUI(); })
+            webAPI_ChangeProfil(data, () => { $('#updateModal').modal('hide'); updateUI(); })
         }
     }
 </script>
