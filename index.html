@@ -409,7 +409,7 @@
 
         let createTitle = $('#createTitle').val();
         let description = $('#createDescription').val();
-        let image = $('#imageCreate_ImageUploader').val();
+        let image = $('#e_imageCreate_ImageUploader').val();
 
         let errorFound = false;
 
@@ -611,7 +611,7 @@
         post += '<div class="visually-hidden" id="imagePost_' + id + '"defautimagesrc="' + imageUrlPost + '"></div>';
         post += '<div class="p-2"><hr>'
         post += ' <p id="card_' + id + '_description" class="overflow-auto style-4" style="max-height:150px;">' + description + '</p>'
-        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'
+        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_' + id + '" name="description" class="form-control style-4"></textarea></p>'
         post += '<hr></div></div>'
         post += '</form>'
         post += '</div></div></div></div>'
@@ -650,7 +650,7 @@
         post += '</div>'
         post += '<div class="p-2"><hr>'
         post += ' <p id="card_' + id + '_description" class="overflow-auto style-4" style="max-height:150px;">' + description + '</p>'
-        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_1" name="description" class="form-control"></textarea></p>'
+        post += '<p id="card_' + id + '_edit_description" hidden class="text-justify text-center overflow-auto style-4" style="max-height:150px;"><textarea id="description_' + id + '" name="description" class="form-control style-4"></textarea></p>'
         post += '<hr></div></div>'
         post += '</div></div></div></div>'
 
@@ -691,15 +691,17 @@
     }
 
     function modify(id, url) {
+        editMode = true;
         createSpecificUploader(id, url)
         let target = 'card_' + id;
         //console.log(target);
         let title = document.getElementById('title_' + id).innerHTML;
         //console.log(title);
-        let description = document.getElementById(target + '_description').innerHTML;
+        let description = $('#card_' + id + '_description').html();
         //console.log(description)
         //console.log(image);
 
+        $('#description_' + id).val(description)
         document.getElementById('title_' + id).hidden = true;
         document.getElementById('title_Input_' + id).hidden = false;
         document.getElementById('title_' + id).value = title;
@@ -718,7 +720,10 @@
         document.getElementById('btn_delete_' + id).hidden = true;
 
         document.getElementById('btn_submit_edit_' + id).hidden = false;
-
+        $('#btn_submit_edit_' + id).click(() => {
+            editMode = false
+            webAPI_PUT()
+        })
 
 
     }
@@ -732,16 +737,16 @@
     }
 
     function cancelEdit(id) {
+        editMode = false
         let target = 'card_' + id;
         //console.log(target);
         let title = document.getElementById(target + '_title').innerHTML;
         //console.log(title);
         let description = document.getElementById(target + '_description').innerHTML;
         //console.log(image);
-
+        $('#imagePost_' + id).addClass('visually-hidden')
         document.getElementById('title_' + id).hidden = false;
-        document.getElementById('title_Input_' + id).hidden = true;
-        console.log(document.getElementById('card_' + id + '_glow'));
+        document.getElementById('title_Input_' + id).hidden = true;;
         document.getElementById('card_' + id + '_glow').classList.add('shadow')
         document.getElementById('card_' + id + '_glow').style.boxShadow = 'none';
 
