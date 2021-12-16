@@ -2,8 +2,8 @@
     Méthodes d'accès aux services Web API_Server/bookmarks
  */
 
+const apiBaseURL = "http://Localhost:5000";
 //const apiBaseURL = "https://funny-ivory-pullover.glitch.me";
-const apiBaseURL = "https://funny-ivory-pullover.glitch.me";
 
 function tokenRequestURL() {
     return apiBaseURL + '/token';
@@ -116,7 +116,7 @@ function webAPI_logout(userId, successCallBack, errorCallBack) {
 }
 function webAPI_HEAD(successCallBack, errorCallBack) {
     $.ajax({
-        url: apiBaseURL + "/api/images",
+        url: apiBaseURL + "/api/news",
         type: 'HEAD',
         contentType: 'text/plain',
         complete: function (request) {
@@ -175,8 +175,9 @@ function webAPI_POST(data, successCallBack, errorCallBack) {
     });
 }
 function webAPI_PUT(data, successCallBack, errorCallBack) {
+    console.log('Put webAPI',data);
     $.ajax({
-        url: apiBaseURL + "/api/images" + "/" + data.Id,
+        url: apiBaseURL + "/api/news" + "/" + data.Id,
         type: 'PUT',
         headers: getBearerAuthorizationToken(),
         contentType: 'application/json',

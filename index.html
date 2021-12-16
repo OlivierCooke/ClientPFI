@@ -29,7 +29,7 @@
                     data-bs-toggle="modal" data-bs-target="#createModal">
                     <i class="bi bi-plus-lg"></i>
                 </button>
-                <div class="dropdown">
+                <div id="dropdownContainer" class="dropdown visually-hidden">
                     <button class="btn btn-outline-primary dropdown-toggle shadow-sm" type="button" id="cmbAuthor"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Filter Author
@@ -37,11 +37,9 @@
                     <ul id="dropdownAuthors" class="dropdown-menu style-4" aria-labelledby="cmbAuthor">
                     </ul>
                 </div>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search by key words"
+                    <input id="searchInput" class="form-control me-2 visually-hidden" type="search" placeholder="Search by key words"
                         aria-label="Search">
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
-                </form>
+                    <button id="btnSearchSubmit" class="btn btn-outline-primary visually-hidden" onclick="updateNewsSearch()">Search</button>
             </div>
             <div class="d-flex flex-row justify-content-end gap-2 flex-grow-1">
                 <div class="connectedContainer d-flex flex-row gap-2 visually-hidden">
@@ -151,6 +149,7 @@
                             same</span>
                         <div class="imageDownloader" id="avatarUpdate" defautimagesrc="assets/user.png"></div>
                         <button id="submitupdate" class="btn btn-primary mt-4">Save Changes</button>
+                        <button id="submitUnsubscribe" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#deleteAccountModal" onclick="deleteUser()">unsubscribe</button>                       
                     </div>
                 </div>
             </div>
@@ -196,7 +195,7 @@
                 <div class="modal-header justify-content-center">
                     <h2 class="modal-title flex-fill text-center registerTitle" id="createModalLabel">Share the news
                     </h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="startRefresh()"></button>
                 </div>
                 <div class="modal-body">
                     <div id="createForm" class="d-grid gap-2">
@@ -245,6 +244,33 @@
             </div>
         </div>
     </div>
+
+
+        <!-- Validation delete user -->
+        <div class="modal fade style-4" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h3 class="modal-title flex-fill text-center registerTitle" id="deleteAccountModalLabel">
+                        Your about to unsubscribe:<br>
+                        <span>Are you sure ?</span>
+                    </h3>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteAccountForm" class="d-flex flex-row justify-content-center gap-2">
+                        <button id="deleteAccountConfirmation" type="button" class="btn-danger" data-bs-dismiss="modal"
+                            aria-label="Confirm">Confirm</button>
+                        <button type="button" class="btn-primary" data-bs-dismiss="modal"
+                            aria-label="Cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- END Validation delete post-->
 </body>
 <script src="js/bootstrap.js"></script>
@@ -267,55 +293,39 @@
     let queryString = "";
     let search = "";
     let searchShowed = false;
-    let sorted = [{ field: "Created", desc: true }];
+    //let sorted = [{ field: "Created", desc: true }];
     let currentETag = "";
     let previousQueryString = "";
     let photoValidationProvider = null;
     let profilValidationProvider = null;
-    let pauseNewsListPeriodicRefresh = false;
+    //let pauseNewsListPeriodicRefresh = false;
     let periodicRefreshPeriod = 5; // seconds
 
-    /*function installPeriodicphotosListRefresh() {
+
+    //GENERAL CODE
+    function installPeriodicnewsListRefresh() {
             setInterval(() => {
-                if (!pausephotosListPeriodicRefresh & connected) getphotos();
+                if (!operationOnGoing() & connected) getNews();
             }, periodicRefreshPeriod * 1000);
-    }*/
-
-    function emptyMainContainer() {
-        let filler = '<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">'
-        filler += '<img id="imageEmpty" class="img-fluid" src="/assets/empty.png">'
-        filler += '<span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span></div>'
-
-        $('#mainContainer').addClass('d-flex');
-
-        $('#mainContainer').append(filler);
-    }
-
-    function loadAuthorsNames() {
-        webAPI_AUTHORS(putAuthorsNameInList, AlertError)
-    }
-
-    function putAuthorsNameInList(news) {
-        $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">All authors</a></li>');
-        $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">My news</a></li>');
-        news.forEach(element => {
-            $('#dropdownAuthors').append('<li><a class="dropdown-item" href="#">' + element + '</a></li>');
-        });
     }
 
     function initUI() {
 
         emptyMainContainer();
 
+        installPeriodicnewsListRefresh();
+
         $("#submitLogin").click(Login)
         $('#submitLogout').click(Logout)
         $('#submitRegister').click(validInputRegister)
         $('#submitupdate').click(saveChanges)
         $('#submitCreate').click(create)
+        $('#addNews').click(()=>{
+            console.log('stop');
+            addMode = true;
+        });
 
-        //Login events
         $('#loginModal').on('shown.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = true;
             if (localStorage.getItem('rememberme') == "1") {
                 $("#remember-me").attr("checked", "checked");
                 let email = localStorage.getItem('loginemail');
@@ -328,7 +338,6 @@
             }
         });
         $('#loginModal').on('hidden.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = false;
             if ($('#remember-me').is(":checked")) {
                 localStorage.setItem('rememberme', "1");
                 localStorage.setItem('loginemail', $("#loginEmail").val());
@@ -342,16 +351,6 @@
 
         // register events
         $('#registerModal').on('shown.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = true;
-
-            /*  J'ai essayer d'intégré l'api dicebear pour avoir des default avatars uniques pour chaques usagers qui ne choisisent pas d'avatars personnels...
-                J'ai remarquer qu'on ne peut pas forcer un file dans un input type file (par souci de securité).. cela veux dire que si on veut intégré l'api il faut envoyer le seed de l'image au serveur pour pouvoir sauvegarder l'avatar de l'usager... comme ceci est un complication, nous avons abandonné le projet.
-                Mais dicebear est cool.... pour les prochains projets... ;)
-            let seed = generateSeed()
-            let fullUrl = 'https://avatars.dicebear.com/api/bottts/' + seed + '.png'
-            $('.imageDownloaderContainer').append('<div class="imageDownloader" id="avatar" defautimagesrc="' + fullUrl + '"></div>')
-            createDiv(fullUrl)
-            */
 
             $('#registerUname').val('');
             $('#registerEmail').val('');
@@ -363,7 +362,6 @@
             createUploader()
         });
         $('#registerModal').on('hidden.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = false;
 
             $('#registerUname').val('');
             $('#registerEmail').val('');
@@ -377,7 +375,7 @@
 
 
         $('#updateModal').on('hidden.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = false;
+            editMode = true;
 
             $('#emailErrorUpdate').addClass('visually-hidden');
             $('#unameErrorUpdate').addClass('visually-hidden');
@@ -390,8 +388,6 @@
             createUploader()
         });
         $('#createModal').on('hidden.bs.modal', function (event) {
-            pauseNewsListPeriodicRefresh = false;
-
             $('#createTitleError').addClass('visually-hidden');
             $('#imageCreateError').addClass('visually-hidden');
             $('#createDescriptionError').addClass('visually-hidden');
@@ -404,8 +400,196 @@
         })
     }
 
+    function closeAllDialog() {
+        editMode = false;
+        addMode = false;
+        console.log('go');
+        editProfil = false;
+        $('#registerModal').modal('hide')
+        $('#loginModal').modal('hide')
+    }
+        
+    function Alert(message) {
+        $.confirm({
+            title: message,
+            content: '',
+            buttons: {
+                close: function () { }
+            }
+        });
+    }
+  
+    function AlertError(status) {
+        $.confirm({
+            title: '<img src="assets/error.png" style="width:40px;margin:10px" alt="httpError"/>Encountered an error!',
+            content: statusToString(status) + ' (' + status + ')',
+            type: 'red',
+            typeAnimated: true,
+            buttons: {
+
+                close: {
+                    btnClass: 'btn-red',
+                    action: function () {
+                        this.close();
+                        if (status == 401) {
+                            forceLogout();
+                        }
+                        pauseNewsListPeriodicRefresh = true;
+                    }
+                }
+            }
+        });
+    }
+
+    function statusToString(status) {
+        let text = "Le server ne répond pas.";
+        switch (status) {
+            case 401: text = "Request not authorized. You need to be logged in."; break;
+            case 409: text = "Data Conflict. Request was rejected."; break;
+            case 422: text = "Data format was incorrect. Request was rejected."; break;
+        }
+        return text;
+    }
+    
+    function operationOnGoing() {
+        return addMode || editMode || editProfil;
+    }
+
+    function startRefresh(){
+        addMode = false;
+        editMode = false;
+        editProfil = false;
+        console.log('go')
+    }
+    //USER FUNCTION:
+
+    function Unsubscribe(id)
+    {
+        let idLogUser = retrieveLoggedUser().Id
+        console.log('avant call id : ', id)
+        if(id != idLogUser)
+            forceLogout()
+        else{
+            webAPI_DELETE_Account(id, forceLogout, AlertError);
+        }
+    }
+
+    function deleteUser()
+    {
+        let id = retrieveLoggedUser().Id
+        console.log(id)
+        $('#deleteAccountConfirmation').click(() => { Unsubscribe(id)})
+    }
+
+    function updateProfile() {
+        if (connected) {
+            let profile = retrieveLoggedUser()
+            $('#updateModal').modal('show');
+            $('#avatarGUID').val(profile.AvatarGUID)
+            $('#updateUname').val(profile.Name)
+            $('#updateEmail').val(profile.Email)
+            setImageDownloaderImage('avatarUpdate', retrieveLoggedUser().AvatarURL)
+            editProfil = true
+        }
+    }
+
+    //DISPLAY FUNCTION
+    function emptyMainContainer() {
+        let filler = '<div id="imageEmptyContainer" class=" d-flex flex-column empty flex-grow-0 m-auto">'
+        filler += '<img id="imageEmpty" class="img-fluid" src="/assets/empty.png">'
+        filler += '<span id="textEmpty" class="text-white text-center"> Wow, such emptyness...</span></div>'
+
+        $('#mainContainer').addClass('d-flex');
+
+        $('#mainContainer').append(filler);
+    }
+
+    function updateUI() {
+        updateConnected();
+        if (connected)
+        {
+            getNews(true);
+            loadAuthorsNames();
+        }
+
+    }
+    //SEARCH FUNCTION
+
+    function loadAuthorsNames() {
+        webAPI_AUTHORS(putAuthorsNameInList, AlertError)
+    }
+
+    function putAuthorsNameInList(news) {
+        $('#dropdownAuthors').empty();
+        $('#dropdownAuthors').append('<li class="liInAuthors">All authors</li>');
+        $('#dropdownAuthors').append('<li class="liInAuthors">My news</li>');
+        news.forEach(element => {
+            $('#dropdownAuthors').append('<li class="liInAuthors">' + element + '</li>');
+        });
+
+
+        $('.liInAuthors').click((e)=>{
+            let text = e.currentTarget.textContent;
+            searchByAuthors(text);
+        })
+    }
+
+    
+    //POST FUNCTIONS
+
+    function modifyPost(id)
+    {
+        //Pour le partial refresh
+        editMode = true;
+        let newTitle = $('#title_Input_' + id).val();
+        let newDescription = $('#description_' + id).val();
+        let image = $('#e_imageCreate_ImageUploader').val();
+
+        console.log(newTitle);
+        console.log(newDescription);
+
+        let errorFound = false;
+
+        if (!newTitle) {
+            errorFound = true;
+            $('#createTitleError').removeClass('visually-hidden');
+        }
+        else {
+            $('#createTitleError').addClass('visually-hidden');
+        }
+
+        if (!newDescription) {
+            errorFound = true;
+            $('#createDescriptionError').removeClass('visually-hidden');
+        }
+        else {
+            $('#createDescriptionError').addClass('visually-hidden');
+        }
+
+        if (errorFound) {
+            console.log('errorFound')
+            e.preventDefault()
+        }
+        else {
+            let userLog = retrieveLoggedUser();
+            let data = {
+                Id: parseInt(id),
+                UserId: userLog['Id'],
+                Titre: newTitle,
+                Description: newDescription,
+                ImageData: getImageData(id)
+            }
+            webAPI_PUT(data,getNews, AlertError);
+            startRefresh();
+        }
+    }
+
+    /*
+        Details: This function is use to create a new post
+    */
     function create(e) {
-        //webAPI_POST
+
+        addMode = true;
 
         let createTitle = $('#createTitle').val();
         let description = $('#createDescription').val();
@@ -454,79 +638,21 @@
         }
     }
 
-    function closeAllDialog() {
-        $('#registerModal').modal('hide')
-        $('#loginModal').modal('hide')
-    }
 
-    function Alert(message) {
-        $.confirm({
-            title: message,
-            content: '',
-            buttons: {
-                close: function () { }
-            }
-        });
-    }
 
-    function updateProfile() {
-        if (connected) {
-            let profile = retrieveLoggedUser()
-            $('#updateModal').modal('show');
-            $('#avatarGUID').val(profile.AvatarGUID)
-            $('#updateUname').val(profile.Name)
-            $('#updateEmail').val(profile.Email)
-            setImageDownloaderImage('avatarUpdate', retrieveLoggedUser().AvatarURL)
-            editProfil = true
-        }
-    }
+    //LOGIN AND LOGOUT FUNCTIONS
+    
 
     function forceLogout() {
-        Alert("Session expired. You have been disconnected.");
+        Alert("You have been disconnected.");
         closeAllDialog();
-        deConnect();
+        connected = false;
         updateUI(true);
     }
 
-    function generateSeed() {
-        let r = (Math.random() + 1).toString(36).substring(2);
-        return r;
-    }
-
     function Logout() {
+        connected = false;
         webAPI_logout(retrieveLoggedUser().Id, updateUI, AlertError)
-    }
-
-    function statusToString(status) {
-        let text = "Le server ne répond pas.";
-        switch (status) {
-            case 401: text = "Request not authorized. You need to be logged in."; break;
-            case 409: text = "Data Conflict. Request was rejected."; break;
-            case 422: text = "Data format was incorrect. Request was rejected."; break;
-        }
-        return text;
-    }
-
-    function AlertError(status) {
-        $.confirm({
-            title: '<img src="assets/error.png" style="width:40px;margin:10px" alt="httpError"/>Encountered an error!',
-            content: statusToString(status) + ' (' + status + ')',
-            type: 'red',
-            typeAnimated: true,
-            buttons: {
-
-                close: {
-                    btnClass: 'btn-red',
-                    action: function () {
-                        this.close();
-                        if (status == 401) {
-                            forceLogout();
-                        }
-                        pauseNewsListPeriodicRefresh = true;
-                    }
-                }
-            }
-        });
     }
 
     function Login() {
@@ -538,12 +664,7 @@
             })
     }
 
-    function updateUI() {
-        updateConnected();
-        if (connected)
-            getNews(true);
-        loadAuthorsNames();
-    }
+
 
     function updateConnected() {
 
@@ -563,6 +684,10 @@
             $('#loginModal').modal('hide');
             $('#addNews').removeClass('visually-hidden')
             $('#mainContainer').empty();
+            $('#dropdownContainer').removeClass('visually-hidden');
+            $('#btnSearchSubmit').removeClass('visually-hidden');
+            $('#searchInput').removeClass('visually-hidden');
+
         }
         else {
             $("#avatarContainer").empty();
@@ -572,14 +697,21 @@
             $('#addNews').addClass('visually-hidden')
             $('#mainContainer').empty();
             emptyMainContainer();
+            $('#dropdownContainer').addClass('visually-hidden');
+            $('#btnSearchSubmit').addClass('visually-hidden');
+            $('#searchInput').addClass('visually-hidden');
         }
     }
 
+
+    //POST TEMPLATE FUNCTIONS
+
     function postTemplateOwner(news) {
+        console.log(news);
         let title = news['Titre'];
         let description = news['Description'];
         let imageUrlPost = news['OriginalURL'];
-        let profileUrl = 'https://i.imgur.com/xhzhaGA.jpg';
+        let profileUrl = "http://localhost:5000/images/"+news['imageProfile']+".png";
         let date = news['Date']
         let username = news['Username']
         let id = news['Id']
@@ -592,7 +724,7 @@
         post += '<div id="card_' + id + '_glow" class="card text-white bg-dark shadow">'
         post += '<div class="d-flex justify-content-between p-2 px-3">'
         post += '<div class="d-flex flex-row align-items-center gap-2">'
-        post += '<img src=" https://i.imgur.com/xhzhaGA.jpg" width="40" class="rounded-circle">'
+        post += '<img src="'+profileUrl+'" width="40" class="rounded-circle">'
         post += '<div class="d-flex flex-column">'
         post += '<span class="font-weight-bold">' + username + '</span>'
         post += '<small class="mr-2">' + date + '</small></div></div>'
@@ -606,7 +738,7 @@
         post += '<i class="bi bi-x-lg"></i></button></div></div>'
         post += '<div id="card_' + id + '_title" class="text-white text-center fs-3 w-100">'
         post += '<span id="title_' + id + '">' + title + '</span>'
-        post += '<input hidden id="title_Input_' + id + '" name="title" type="text" class="mb-2 mt-2 rounded border-3 border-primary" value="test"></input></div>'
+        post += '<input hidden id="title_Input_' + id + '" name="title" type="text" class="mb-2 mt-2 rounded border-3 border-primary" value="'+title+'"></input></div>'
         post += '<img id="image_displayer_' + id + '" src="' + imageUrlPost + '" class="img-fluid">'
         post += '<div class="visually-hidden" id="imagePost_' + id + '"defautimagesrc="' + imageUrlPost + '"></div>';
         post += '<div class="p-2"><hr>'
@@ -659,13 +791,25 @@
 
     function getNews(forceRefreshphotoList = false) {
         if (forceRefreshphotoList) {
-            webAPI_GET_ALL('?sort=Date,desc', updateNewsList, AlertError);
+            if(queryString == "")
+            {
+                queryString = '?sort=Date,desc'
+            }
+            webAPI_GET_ALL(queryString, updateNewsList, AlertError);
         } else
             webAPI_HEAD(checkETag, AlertError);
     }
 
+    function checkETag(ETag) {
+        console.log('check etag')
+        if (ETag != currentETag) {
+            webAPI_GET_ALL('?sort=Date,desc', updateNewsList, AlertError);
+        }
+    }
+
     function updateNewsList(news, Etag) {
         //let mainContainer = '<div id="mainContainer" class="container overflow-auto style-4" style="margin-top: 80px; height: 91vh;"> </div>';
+        currentETag = Etag;
         $('#mainContainer').removeClass('d-flex');
         $('#mainContainer').empty();
         let loggedUserId = (retrieveLoggedUser() ? retrieveLoggedUser().Id : null);
@@ -694,12 +838,8 @@
         editMode = true;
         createSpecificUploader(id, url)
         let target = 'card_' + id;
-        //console.log(target);
         let title = document.getElementById('title_' + id).innerHTML;
-        //console.log(title);
         let description = $('#card_' + id + '_description').html();
-        //console.log(description)
-        //console.log(image);
 
         $('#description_' + id).val(description)
         document.getElementById('title_' + id).hidden = true;
@@ -718,11 +858,16 @@
         document.getElementById('btn_cancel_' + id).hidden = false;
         document.getElementById('edit_btn_' + id).hidden = true;
         document.getElementById('btn_delete_' + id).hidden = true;
-
         document.getElementById('btn_submit_edit_' + id).hidden = false;
-        $('#btn_submit_edit_' + id).click(() => {
-            editMode = false
-            webAPI_PUT()
+        
+        $('#btn_submit_edit_' + id).click((e) => {
+            let id = e.currentTarget.id.replace('btn_submit_edit_','');
+            console.log(id);
+            //editMode = false
+            //webAPI_PUT()
+
+            modifyPost(id)
+
         })
 
 
@@ -739,11 +884,8 @@
     function cancelEdit(id) {
         editMode = false
         let target = 'card_' + id;
-        //console.log(target);
         let title = document.getElementById(target + '_title').innerHTML;
-        //console.log(title);
         let description = document.getElementById(target + '_description').innerHTML;
-        //console.log(image);
         $('#imagePost_' + id).addClass('visually-hidden')
         document.getElementById('title_' + id).hidden = false;
         document.getElementById('title_Input_' + id).hidden = true;;
@@ -751,7 +893,6 @@
         document.getElementById('card_' + id + '_glow').style.boxShadow = 'none';
 
         document.getElementById('card_' + id + '_edit_description').hidden = true;
-        //document.getElementById('description_'+id).value = description;
         document.getElementById('card_' + id + '_description').hidden = false;
         document.getElementById('image_displayer_' + id).hidden = false;
         $('#imagePost').addClass('visually-hidden');
@@ -773,14 +914,7 @@
         return "<div class='" + css + "' style='background:url(" + Avatar_url + ") no-repeat center; background-size: cover;'></div>";
     }
 
-    function operationOnGoing() {
-        return addMode || editMode || editProfil;
-    }
-
-    function preview(id) {
-        let image = document.getElementById('registerImage');
-        image.src = URL.createObjectURL(event.target.files[0]);
-    }
+   
 
     function validInputRegister(e) {
         let regexEmail = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$/
@@ -834,9 +968,6 @@
 
     }
 
-    /*
-        PAS TOUCHE AU UPDATE PROFILE .... CA CHIE LE PROFILE QUE TU UTILISE... JE SAIS COMMENT FIX... LAISSE MOI FAIRE :D
-    */
     function saveChanges(e) {
         let regexEmail = /^[a-zA-Z0-9.!#$%&'+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)$/
         let avatarGUID = $("#avatarGUID").val();
@@ -884,6 +1015,41 @@
             webAPI_ChangeProfil(data, () => { $('#updateModal').modal('hide'); updateUI(); })
         }
     }
+
+    function updateNewsSearch()
+    {
+        queryString = "";
+
+        let search = $('#searchInput').val();
+
+        if (search != "") {
+           queryString = "?Titre="+search+"&"+"Description="+search;
+           console.log(queryString)
+        }
+        getNews(true);
+    }
+
+    function searchByAuthors(authorName)
+    {
+
+        if(authorName == "All authors")
+        {
+            queryString = "";
+            getNews(true);
+        }
+        else if(authorName == "My news")
+        {
+            queryString = "?Username=" + $('#link_OpenProfilDialog').text();
+            getNews(true);
+        }
+        else
+        {
+            queryString = "?Username="+authorName;
+        getNews(true);
+        }
+
+    }
+
 </script>
 
 </html>
